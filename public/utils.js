@@ -34,16 +34,17 @@ function extractBaseUrl(utmUrl) {
 
 function buildQrFilename(link) {
   const dest = slugify(link.destination_url.replace(/^https?:\/\//, '').replace(/\//g, '-').replace(/-$/, ''));
-  return `qr_utm_${slugify(link.campaign)}_${slugify(link.source)}_${slugify(link.medium)}_${dest}.png`;
+  return `qr_utm_${slugify(link.campaign)}_${slugify(link.source)}_${slugify(link.medium)}_${dest}.svg`;
 }
 
 async function downloadQr(utmUrl, link) {
-  const res = await fetch(`/api/qr?url=${encodeURIComponent(utmUrl)}`);
+  const res = await fetch(`/api/qr?url=${encodeURIComponent(utmUrl)}&format=svg`);
   if (!res.ok) throw new Error('QR generation failed');
   const blob = await res.blob();
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = link ? buildQrFilename(link) : 'qr_utm.png';
+  const name = link ? buildQrFilename(link) : 'qr_utm.svg';
+  a.download = name;
   a.click();
   URL.revokeObjectURL(a.href);
 }
