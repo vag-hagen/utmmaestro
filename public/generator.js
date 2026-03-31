@@ -58,7 +58,7 @@ const generatorModule = (() => {
     const note       = document.getElementById('save-note').value.trim();
 
     try {
-      await API.links.create({
+      const saved = await API.links.create({
         campaign:        slugify(fields.campaign),
         source:          slugify(fields.source),
         medium:          slugify(fields.medium),
@@ -69,7 +69,9 @@ const generatorModule = (() => {
         note:            note || undefined,
       });
       closeSaveDrawer();
-      showFeedback('Link saved');
+      const shortLink = saved.slug ? `https://utm.versino.de/${saved.slug}` : '';
+      showFeedback(shortLink ? `Saved — Short link: ${shortLink}` : 'Link saved');
+      if (shortLink) copyToClipboard(shortLink);
       loadSuggestions();
     } catch (err) {
       showFeedback(err.message, 'error');

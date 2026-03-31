@@ -124,7 +124,8 @@
                 <th data-sort-key="source">Source</th>
                 <th data-sort-key="medium">Medium</th>
                 <th>Destination</th>
-                <th>UTM URL</th>
+                <th>Short Link</th>
+                <th data-sort-key="clicks">Clicks</th>
                 <th data-sort-key="created_by">By</th>
                 <th>Note</th>
                 <th data-sort-key="status">Status</th>
@@ -181,6 +182,13 @@
                 <option value="active">Active</option>
                 <option value="archived">Archived</option>
               </select>
+            </div>
+            <div class="form-row">
+              <label for="edit-slug">Short Link Slug</label>
+              <div class="slug-field">
+                <span class="slug-prefix">utm.versino.de/</span>
+                <input type="text" id="edit-slug">
+              </div>
             </div>
             <div class="edit-preview">
               <div class="preview-label">UTM URL Preview</div>

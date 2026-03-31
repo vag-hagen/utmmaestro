@@ -49,19 +49,22 @@ const registryModule = (() => {
     const tr = document.createElement('tr');
     tr.dataset.linkId = link.id;
 
+    const shortUrl = link.slug ? `utm.versino.de/${link.slug}` : '—';
     tr.innerHTML = `
       <td title="${escapeHtml(link.created_at)}">${formatDate(link.created_at)}</td>
       <td title="${escapeHtml(link.campaign)}">${escapeHtml(link.campaign)}</td>
       <td>${escapeHtml(link.source)}</td>
       <td>${escapeHtml(link.medium)}</td>
       <td class="url-cell" title="${escapeHtml(link.destination_url)}">${escapeHtml(link.destination_url)}</td>
-      <td class="url-cell" title="${escapeHtml(link.utm_url)}">${escapeHtml(link.utm_url)}</td>
+      <td class="url-cell" title="${escapeHtml(shortUrl)}">${escapeHtml(shortUrl)}</td>
+      <td data-sort-value="${link.clicks || 0}">${(link.clicks || 0).toLocaleString()}</td>
       <td>${escapeHtml(link.created_by) || '—'}</td>
       <td title="${escapeHtml(link.note)}">${escapeHtml(link.note) || '—'}</td>
       <td><span class="badge ${archived ? 'badge-archived' : 'badge-active'}">${archived ? 'archived' : 'active'}</span></td>
       <td>${g4 ? g4.sessions.toLocaleString() : '—'}</td>
       <td>${g4 ? g4.conversions.toLocaleString() : '—'}</td>
       <td class="row-actions">
+        <button class="btn-icon" title="Copy Short Link" data-action="copy-short">🔗</button>
         <button class="btn-icon" title="Copy UTM URL" data-action="copy">⧉</button>
         <button class="btn-icon" title="QR Code" data-action="qr">⊞</button>
         <button class="btn-icon" title="Edit" data-action="edit">✎</button>
@@ -109,7 +112,9 @@ const registryModule = (() => {
     const id = row?.dataset.linkId;
     const link = id ? findLink(id) : null;
 
-    if (action === 'copy' && link) {
+    if (action === 'copy-short' && link) {
+      copyToClipboard(link.slug ? `https://utm.versino.de/${link.slug}` : link.utm_url);
+    } else if (action === 'copy' && link) {
       copyToClipboard(link.utm_url);
     } else if (action === 'qr' && link) {
       await downloadQr(link.utm_url, link).catch(err => alert(err.message));
@@ -137,6 +142,7 @@ const registryModule = (() => {
     document.getElementById('edit-author').value       = link.created_by || '';
     document.getElementById('edit-note').value         = link.note || '';
     document.getElementById('edit-status').value       = link.status || 'active';
+    document.getElementById('edit-slug').value         = link.slug || '';
     updateEditPreview();
     document.getElementById('edit-modal').classList.remove('hidden');
 
@@ -187,6 +193,7 @@ const registryModule = (() => {
     const created_by  = document.getElementById('edit-author').value.trim();
     const note        = document.getElementById('edit-note').value.trim();
     const status      = document.getElementById('edit-status').value;
+    const slug        = document.getElementById('edit-slug').value.trim();
 
     const utm_url = buildUtmUrl({ destination_url: dest, source, medium, campaign, content });
 
@@ -201,6 +208,7 @@ const registryModule = (() => {
         created_by,
         note,
         status,
+        slug:            slug || undefined,
       });
       closeEditModal();
       load();

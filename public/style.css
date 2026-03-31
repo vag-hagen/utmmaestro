@@ -489,6 +489,29 @@ td.url-cell:hover { text-shadow: var(--blue-glow-sm); }
   text-shadow: var(--blue-glow-sm);
 }
 
+/* ── SLUG FIELD ── */
+.slug-field {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  width: 100%;
+}
+.slug-prefix {
+  background: var(--bg-raised);
+  border: 1px solid var(--border-bright);
+  border-right: none;
+  border-radius: var(--radius) 0 0 var(--radius);
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  padding: 10px 12px;
+  white-space: nowrap;
+}
+.slug-field input {
+  border-radius: 0 var(--radius) var(--radius) 0 !important;
+  font-family: var(--font-mono);
+}
+
 /* ── EDIT MODAL ── */
 .edit-preview {
   background: var(--bg-raised);
