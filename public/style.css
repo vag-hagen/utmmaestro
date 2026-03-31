@@ -686,5 +686,155 @@ td.actions-cell {
   100% { opacity: 0; transform: translate(-50%, -140%); }
 }
 
+/* ══════════════════════════════════════════════════
+   RESPONSIVE — TABLET (≤ 900px)
+   ══════════════════════════════════════════════════ */
+@media (max-width: 900px) {
+  .panel-inner { max-width: 95%; padding: 20px; }
+  .modal-box { width: 95%; padding: 20px; }
+  .modal-metrics { grid-template-columns: repeat(3, 1fr); }
+  .dashboard-toolbar { gap: 10px; }
+  .dash-date-range { flex-wrap: wrap; }
+}
+
+/* ══════════════════════════════════════════════════
+   RESPONSIVE — MOBILE (≤ 640px)
+   ══════════════════════════════════════════════════ */
+@media (max-width: 640px) {
+  /* Header: stack logo + tabs */
+  header {
+    flex-direction: column;
+    height: auto;
+    padding: 12px 16px;
+    gap: 8px;
+  }
+  .logo { font-size: 17px; }
+  .tab-nav { width: 100%; justify-content: space-around; }
+  .tab-btn {
+    padding: 8px 12px;
+    font-size: 11px;
+    flex: 1;
+    text-align: center;
+  }
+
+  /* Panels */
+  .panel-inner { max-width: 100%; padding: 16px; }
+
+  /* Forms: stack label above input */
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 4px;
+    margin-bottom: 14px;
+  }
+
+  /* Inputs slightly smaller padding */
+  input[type="text"],
+  input[type="url"],
+  input[type="date"],
+  select {
+    font-size: 16px; /* prevents iOS zoom */
+    padding: 10px 12px;
+  }
+
+  /* Preview box */
+  .preview-box { padding: 16px; margin-top: 20px; }
+  .preview-url { font-size: 12px; padding: 8px 10px; }
+  .preview-actions { flex-wrap: wrap; gap: 8px; }
+  .preview-actions .btn { flex: 1; min-width: 0; text-align: center; padding: 10px 12px; }
+
+  /* Buttons */
+  .btn { padding: 10px 14px; font-size: 11px; }
+
+  /* Toolbar: stack fields */
+  .toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 14px;
+    gap: 10px;
+  }
+  .toolbar-field { min-width: 0; }
+  .toolbar-field-wide { min-width: 0; }
+  .toolbar-actions {
+    flex-wrap: wrap;
+    justify-content: stretch;
+  }
+  .toolbar-actions .btn { flex: 1; text-align: center; }
+
+  /* Table: smaller text, tighter padding */
+  table { font-size: 11px; }
+  thead th { padding: 8px 8px; font-size: 10px; }
+  td { padding: 8px 8px; max-width: 120px; }
+
+  /* Actions: wrap vertically */
+  .row-actions { flex-wrap: wrap; gap: 4px; }
+  .btn-icon { padding: 6px 8px; font-size: 16px; }
+
+  /* Dashboard toolbar */
+  .dashboard-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+  .sub-tabs { justify-content: center; }
+  .sub-tab-btn { flex: 1; text-align: center; padding: 8px 10px; font-size: 11px; }
+  .dash-date-range { flex-direction: column; }
+  .dash-date-range .toolbar-field { min-width: 0; }
+
+  /* Metric cards: 2 columns on mobile */
+  .modal-metrics { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .metric-value { font-size: 20px; }
+  .metric-card { padding: 14px; }
+
+  /* Modal */
+  .modal-box {
+    width: 96%;
+    max-height: 90vh;
+    padding: 16px;
+    top: 50%;
+    border-radius: 8px;
+  }
+  .modal-header { margin-bottom: 16px; }
+  .modal-title { font-size: 13px; }
+
+  /* Edit modal */
+  .edit-actions { flex-wrap: wrap; }
+  .edit-actions .btn { flex: 1; text-align: center; }
+  .slug-field { flex-wrap: wrap; }
+  .slug-prefix {
+    border-right: 1px solid var(--border-bright);
+    border-radius: var(--radius) var(--radius) 0 0;
+    width: 100%;
+    text-align: center;
+  }
+  .slug-field input {
+    border-radius: 0 0 var(--radius) var(--radius) !important;
+  }
+
+  /* Chart */
+  .chart-container { max-width: 100%; }
+
+  /* Expand button */
+  .btn-expand { font-size: 12px; }
+
+  /* Context menu */
+  .ctx-menu { min-width: 140px; }
+  .ctx-item { padding: 12px 16px; }
+
+  /* Autocomplete */
+  .ac-list { max-height: 180px; }
+}
+
+/* ══════════════════════════════════════════════════
+   RESPONSIVE — SMALL PHONE (≤ 380px)
+   ══════════════════════════════════════════════════ */
+@media (max-width: 380px) {
+  .logo { font-size: 15px; letter-spacing: 0.08em; }
+  .tab-btn { font-size: 10px; padding: 6px 8px; }
+  .panel-inner { padding: 12px; }
+  .modal-metrics { grid-template-columns: 1fr 1fr; }
+  .metric-value { font-size: 18px; }
+  td { max-width: 80px; font-size: 10px; }
+}
+
 /* ── UTILITIES ── */
 .hidden { display: none !important; }
