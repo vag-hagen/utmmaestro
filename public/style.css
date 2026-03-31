@@ -318,15 +318,13 @@ tbody tr:hover { background: var(--bg-hover); }
 
 td {
   max-width: 220px;
-  overflow-x: auto;
-  overflow-y: hidden;
+  overflow: hidden;
+  text-overflow: ellipsis;
   padding: 12px 14px;
   vertical-align: middle;
   white-space: nowrap;
   color: var(--text-secondary);
 }
-td::-webkit-scrollbar { height: 3px; }
-td::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 
 td.url-cell {
   color: var(--blue-bright);
