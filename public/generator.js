@@ -42,10 +42,11 @@ const generatorModule = (() => {
 
   async function loadSuggestions() {
     try {
-      const { sources, mediums, campaigns } = await API.links.suggestions();
+      const { sources, mediums, campaigns, authors } = await API.links.suggestions();
       Autocomplete.update(document.getElementById('source'), sources);
       Autocomplete.update(document.getElementById('medium'), mediums);
       Autocomplete.update(document.getElementById('campaign'), campaigns);
+      Autocomplete.update(document.getElementById('created_by'), authors);
     } catch { /* silently ignore on first load */ }
   }
 
@@ -82,6 +83,7 @@ const generatorModule = (() => {
     Autocomplete.attach(document.getElementById('source'), []);
     Autocomplete.attach(document.getElementById('medium'), []);
     Autocomplete.attach(document.getElementById('campaign'), []);
+    Autocomplete.attach(document.getElementById('created_by'), []);
 
     document.getElementById('btn-copy').addEventListener('click', () => {
       if (!currentUtmUrl) return;
@@ -91,7 +93,8 @@ const generatorModule = (() => {
 
     document.getElementById('btn-qr').addEventListener('click', async () => {
       if (!currentUtmUrl) return;
-      try { await downloadQr(currentUtmUrl); }
+      const campaign = document.getElementById('campaign').value;
+      try { await downloadQr(currentUtmUrl, campaign); }
       catch (err) { showFeedback(err.message, 'error'); }
     });
 

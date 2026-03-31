@@ -45,7 +45,7 @@ async function refreshGa4Cache(range) {
     metrics: [
       { name: 'sessions' },
       { name: 'totalUsers' },
-      { name: 'conversions' },
+      { name: 'keyEvents' },
       { name: 'bounceRate' },
       { name: 'averageSessionDuration' },
     ],
@@ -67,7 +67,7 @@ async function refreshGa4Cache(range) {
     const d = row.dimensionValues.map(v => v.value);
     const m = row.metricValues.map(v => parseFloat(v.value) || 0);
     // d: [campaign, source, medium, date YYYYMMDD]
-    // m: [sessions, users, conversions, bounceRate, avgSessionDuration]
+    // m: [sessions, users, keyEvents, bounceRate, avgSessionDuration]
     const reportDate = `${d[3].slice(0, 4)}-${d[3].slice(4, 6)}-${d[3].slice(6, 8)}`;
     return [d[0], d[1], d[2], reportDate, range, m[0], m[1], m[2], m[3], m[4]];
   });
@@ -82,14 +82,16 @@ function scheduleGa4Refresh() {
     return;
   }
   cron.schedule('0 3 * * *', async () => {
-    try {
-      const n = await refreshGa4Cache('30d');
-      console.log(`GA4 auto-refresh: ${n} rows cached`);
-    } catch (err) {
-      console.error('GA4 auto-refresh failed:', err.message);
+    for (const range of ['7d', '30d', '90d']) {
+      try {
+        const n = await refreshGa4Cache(range);
+        console.log(`GA4 auto-refresh (${range}): ${n} rows cached`);
+      } catch (err) {
+        console.error(`GA4 auto-refresh (${range}) failed:`, err.message);
+      }
     }
   });
-  console.log('GA4 auto-refresh scheduled (daily 03:00)');
+  console.log('GA4 auto-refresh scheduled (daily 03:00, all ranges)');
 }
 
 module.exports = { refreshGa4Cache, scheduleGa4Refresh, dateRangeToParams };

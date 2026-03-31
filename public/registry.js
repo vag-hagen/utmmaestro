@@ -62,7 +62,8 @@ const registryModule = (() => {
       <td>${g4 ? g4.conversions.toLocaleString() : '—'}</td>
       <td class="row-actions">
         <button class="btn-icon" title="Copy UTM URL" data-action="copy" data-url="${escapeHtml(link.utm_url)}">⧉</button>
-        <button class="btn-icon" title="QR Code" data-action="qr" data-url="${escapeHtml(link.utm_url)}">⊞</button>
+        <button class="btn-icon" title="QR Code" data-action="qr" data-url="${escapeHtml(link.utm_url)}" data-campaign="${escapeHtml(link.campaign)}">⊞</button>
+        <button class="btn-icon" title="Edit" data-action="edit" data-id="${link.id}" data-note="${escapeHtml(link.note)}" data-author="${escapeHtml(link.created_by)}">✎</button>
         <button class="btn-icon" title="${archived ? 'Reactivate' : 'Archive'}" data-action="archive" data-id="${link.id}" data-new-status="${archived ? 'active' : 'archived'}">${archived ? '↩' : '⊠'}</button>
         <button class="btn-icon danger" title="Delete" data-action="delete" data-id="${link.id}">✕</button>
       </td>
@@ -98,12 +99,14 @@ const registryModule = (() => {
   async function handleAction(e) {
     const btn = e.target.closest('[data-action]');
     if (!btn) return;
-    const { action, id, url, newStatus } = btn.dataset;
+    const { action, id, url, newStatus, campaign, note, author } = btn.dataset;
 
     if (action === 'copy') {
       copyToClipboard(url);
     } else if (action === 'qr') {
-      await downloadQr(url).catch(err => alert(err.message));
+      await downloadQr(url, campaign).catch(err => alert(err.message));
+    } else if (action === 'edit') {
+      openEditDialog(id, note || '', author || '');
     } else if (action === 'archive') {
       await API.links.update(id, { status: newStatus }).catch(console.error);
       load();
@@ -112,6 +115,18 @@ const registryModule = (() => {
       await API.links.remove(id).catch(console.error);
       load();
     }
+  }
+
+  function openEditDialog(id, currentNote, currentAuthor) {
+    const newNote   = prompt('Note:', currentNote);
+    if (newNote === null) return; // cancelled
+    const newAuthor = prompt('Author:', currentAuthor);
+    if (newAuthor === null) return;
+    const patch = {};
+    if (newNote !== currentNote)     patch.note = newNote;
+    if (newAuthor !== currentAuthor) patch.created_by = newAuthor;
+    if (Object.keys(patch).length === 0) return;
+    API.links.update(id, patch).then(() => load()).catch(console.error);
   }
 
   function handleCellContextMenu(e) {

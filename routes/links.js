@@ -4,10 +4,11 @@ const db = require('../db');
 
 // GET /api/links/suggestions — distinct values for autocomplete
 router.get('/suggestions', (_req, res) => {
-  const sources   = db.prepare('SELECT DISTINCT source FROM links ORDER BY source').all().map(r => r.source);
-  const mediums   = db.prepare('SELECT DISTINCT medium FROM links ORDER BY medium').all().map(r => r.medium);
-  const campaigns = db.prepare('SELECT DISTINCT campaign FROM links ORDER BY campaign').all().map(r => r.campaign);
-  res.json({ sources, mediums, campaigns });
+  const sources    = db.prepare('SELECT DISTINCT source FROM links ORDER BY source').all().map(r => r.source);
+  const mediums    = db.prepare('SELECT DISTINCT medium FROM links ORDER BY medium').all().map(r => r.medium);
+  const campaigns  = db.prepare('SELECT DISTINCT campaign FROM links ORDER BY campaign').all().map(r => r.campaign);
+  const authors    = db.prepare('SELECT DISTINCT created_by FROM links WHERE created_by IS NOT NULL ORDER BY created_by').all().map(r => r.created_by);
+  res.json({ sources, mediums, campaigns, authors });
 });
 
 // GET /api/links/sources — must be before /:id
@@ -54,9 +55,12 @@ router.post('/', (req, res) => {
 router.patch('/:id', (req, res) => {
   const link = db.prepare('SELECT id FROM links WHERE id = ?').get(req.params.id);
   if (!link) return res.status(404).json({ error: 'Not found' });
-  const { status, note } = req.body;
-  if (status !== undefined) db.prepare('UPDATE links SET status = ? WHERE id = ?').run(status, req.params.id);
-  if (note !== undefined)   db.prepare('UPDATE links SET note = ? WHERE id = ?').run(note, req.params.id);
+  const allowed = ['campaign', 'source', 'medium', 'content', 'destination_url', 'utm_url', 'created_by', 'note', 'status'];
+  for (const key of allowed) {
+    if (req.body[key] !== undefined) {
+      db.prepare(`UPDATE links SET ${key} = ? WHERE id = ?`).run(req.body[key], req.params.id);
+    }
+  }
   res.json(db.prepare('SELECT * FROM links WHERE id = ?').get(req.params.id));
 });
 

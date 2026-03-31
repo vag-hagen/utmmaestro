@@ -32,13 +32,14 @@ function extractBaseUrl(utmUrl) {
   }
 }
 
-async function downloadQr(utmUrl) {
+async function downloadQr(utmUrl, label) {
   const res = await fetch(`/api/qr?url=${encodeURIComponent(utmUrl)}`);
-  if (!res.ok) throw new Error('QR-Generierung fehlgeschlagen');
+  if (!res.ok) throw new Error('QR generation failed');
   const blob = await res.blob();
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = 'utm-qr.png';
+  const name = label ? slugify(label) : 'utm-qr';
+  a.download = `${name}.png`;
   a.click();
   URL.revokeObjectURL(a.href);
 }
