@@ -1,2 +1,62 @@
 const express = require('express');
-module.exports = express.Router();
+const router = express.Router();
+const db = require('../db');
+
+// GET /api/links/sources — must be before /:id
+router.get('/sources', (_req, res) => {
+  const rows = db.prepare('SELECT DISTINCT source FROM links ORDER BY source').all();
+  res.json(rows.map(r => r.source));
+});
+
+// GET /api/links
+router.get('/', (req, res) => {
+  const { campaign, source, medium, status, from, to, q } = req.query;
+  let sql = 'SELECT * FROM links WHERE 1=1';
+  const params = [];
+
+  if (campaign) { sql += ' AND campaign LIKE ?'; params.push(`%${campaign}%`); }
+  if (source)   { sql += ' AND source LIKE ?';   params.push(`%${source}%`); }
+  if (medium)   { sql += ' AND medium = ?';       params.push(medium); }
+  if (status)   { sql += ' AND status = ?';       params.push(status); }
+  if (from)     { sql += ' AND created_at >= ?';  params.push(from); }
+  if (to)       { sql += ' AND created_at <= ?';  params.push(`${to}T23:59:59`); }
+  if (q) {
+    const t = `%${q}%`;
+    sql += ' AND (campaign LIKE ? OR source LIKE ? OR medium LIKE ? OR destination_url LIKE ? OR utm_url LIKE ? OR created_by LIKE ? OR note LIKE ?)';
+    params.push(t, t, t, t, t, t, t);
+  }
+
+  sql += ' ORDER BY created_at DESC';
+  res.json(db.prepare(sql).all(...params));
+});
+
+// POST /api/links
+router.post('/', (req, res) => {
+  const { campaign, source, medium, content, destination_url, utm_url, created_by, note } = req.body;
+  if (!campaign || !source || !medium || !destination_url || !utm_url) {
+    return res.status(400).json({ error: 'Missing required fields: campaign, source, medium, destination_url, utm_url' });
+  }
+  const result = db.prepare(
+    'INSERT INTO links (campaign, source, medium, content, destination_url, utm_url, created_by, note) VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
+  ).run(campaign, source, medium, content || null, destination_url, utm_url, created_by || null, note || null);
+  res.status(201).json(db.prepare('SELECT * FROM links WHERE id = ?').get(result.lastInsertRowid));
+});
+
+// PATCH /api/links/:id
+router.patch('/:id', (req, res) => {
+  const link = db.prepare('SELECT id FROM links WHERE id = ?').get(req.params.id);
+  if (!link) return res.status(404).json({ error: 'Not found' });
+  const { status, note } = req.body;
+  if (status !== undefined) db.prepare('UPDATE links SET status = ? WHERE id = ?').run(status, req.params.id);
+  if (note !== undefined)   db.prepare('UPDATE links SET note = ? WHERE id = ?').run(note, req.params.id);
+  res.json(db.prepare('SELECT * FROM links WHERE id = ?').get(req.params.id));
+});
+
+// DELETE /api/links/:id
+router.delete('/:id', (req, res) => {
+  const result = db.prepare('DELETE FROM links WHERE id = ?').run(req.params.id);
+  if (result.changes === 0) return res.status(404).json({ error: 'Not found' });
+  res.status(204).end();
+});
+
+module.exports = router;
