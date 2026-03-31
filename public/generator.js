@@ -56,26 +56,37 @@ const generatorModule = (() => {
     const fields     = getFields();
     const created_by = document.getElementById('created_by').value.trim();
     const note       = document.getElementById('save-note').value.trim();
+    const campaign   = slugify(fields.campaign);
+    const source     = slugify(fields.source);
+    const medium     = slugify(fields.medium);
+    const dest       = extractBaseUrl(currentUtmUrl);
 
     try {
+      // Check for duplicate before saving
+      const { duplicate } = await API.request('GET',
+        `/links/check-duplicate?${new URLSearchParams({ campaign, source, medium, destination_url: dest })}`);
+      if (duplicate) {
+        const ok = confirm(
+          `A link with this combination already exists:\n\n` +
+          `Short link: ${duplicate.slug || '—'}\n` +
+          `Created: ${formatDate(duplicate.created_at)}\n` +
+          `By: ${duplicate.created_by || '—'}\n\n` +
+          `Save anyway?`
+        );
+        if (!ok) return;
+      }
+
       const saved = await API.links.create({
-        campaign:        slugify(fields.campaign),
-        source:          slugify(fields.source),
-        medium:          slugify(fields.medium),
+        campaign, source, medium,
         content:         fields.content ? slugify(fields.content) : undefined,
-        destination_url: extractBaseUrl(currentUtmUrl),
+        destination_url: dest,
         utm_url:         currentUtmUrl,
         created_by:      created_by || undefined,
         note:            note || undefined,
       });
       closeSaveDrawer();
       const shortLink = saved.slug ? `https://utm.versino.de/${saved.slug}` : '';
-      if (saved._duplicate) {
-        const d = saved._duplicate;
-        showFeedback(`Saved — but a duplicate exists (ID ${d.id}, slug: ${d.slug || '—'}, created: ${formatDate(d.created_at)})`, 'error');
-      } else {
-        showFeedback(shortLink ? `Saved — Short link: ${shortLink}` : 'Link saved');
-      }
+      showFeedback(shortLink ? `Saved — Short link: ${shortLink}` : 'Link saved');
       if (shortLink) copyToClipboard(shortLink);
       loadSuggestions();
     } catch (err) {

@@ -59,6 +59,16 @@ router.get('/clicks', (req, res) => {
   res.json({ summary, daily });
 });
 
+// GET /api/links/check-duplicate — check before saving
+router.get('/check-duplicate', (req, res) => {
+  const { campaign, source, medium, destination_url } = req.query;
+  if (!campaign || !source || !medium || !destination_url) return res.json({ duplicate: null });
+  const existing = db.prepare(
+    'SELECT id, slug, created_at, created_by FROM links WHERE campaign = ? AND source = ? AND medium = ? AND destination_url = ?'
+  ).get(campaign, source, medium, destination_url);
+  res.json({ duplicate: existing || null });
+});
+
 // GET /api/links/sources — must be before /:id
 router.get('/sources', (_req, res) => {
   const rows = db.prepare('SELECT DISTINCT source FROM links ORDER BY source').all();
@@ -98,21 +108,11 @@ router.post('/', (req, res) => {
   if (!campaign || !source || !medium || !destination_url || !utm_url) {
     return res.status(400).json({ error: 'Missing required fields: campaign, source, medium, destination_url, utm_url' });
   }
-  // Check for duplicate campaign+source+medium+destination
-  const existing = db.prepare(
-    'SELECT id, slug, created_at FROM links WHERE campaign = ? AND source = ? AND medium = ? AND destination_url = ?'
-  ).get(campaign, source, medium, destination_url);
-
   const slug = uniqueSlug();
   const result = db.prepare(
     'INSERT INTO links (campaign, source, medium, content, destination_url, utm_url, created_by, note, slug) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)'
   ).run(campaign, source, medium, content || null, destination_url, utm_url, created_by || null, note || null, slug);
-  const created = db.prepare('SELECT * FROM links WHERE id = ?').get(result.lastInsertRowid);
-
-  if (existing) {
-    created._duplicate = { id: existing.id, slug: existing.slug, created_at: existing.created_at };
-  }
-  res.status(201).json(created);
+  res.status(201).json(db.prepare('SELECT * FROM links WHERE id = ?').get(result.lastInsertRowid));
 });
 
 // PATCH /api/links/:id
