@@ -353,6 +353,11 @@ td.url-cell:hover { text-shadow: var(--blue-glow-sm); }
   color: var(--text-muted);
 }
 
+td.actions-cell {
+  max-width: none;
+  overflow: visible;
+  white-space: nowrap;
+}
 .row-actions { display: flex; gap: 6px; }
 
 .btn-icon {

@@ -63,7 +63,7 @@ const registryModule = (() => {
       <td><span class="badge ${archived ? 'badge-archived' : 'badge-active'}">${archived ? 'archived' : 'active'}</span></td>
       <td>${g4 ? g4.sessions.toLocaleString() : '—'}</td>
       <td>${g4 ? g4.conversions.toLocaleString() : '—'}</td>
-      <td class="row-actions">
+      <td class="actions-cell row-actions">
         <button class="btn-icon" title="Copy Short Link" data-action="copy-short">🔗</button>
         <button class="btn-icon" title="Copy UTM URL" data-action="copy">⧉</button>
         <button class="btn-icon" title="QR Code" data-action="qr">⊞</button>
