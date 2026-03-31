@@ -57,8 +57,14 @@
         </div>
 
         <div id="save-drawer" class="save-drawer hidden">
-          <input type="text" id="created_by">
-          <input type="text" id="save-note">
+          <div class="drawer-field">
+            <label for="created_by">Author</label>
+            <input type="text" id="created_by">
+          </div>
+          <div class="drawer-field">
+            <label for="save-note">Note</label>
+            <input type="text" id="save-note">
+          </div>
           <button id="btn-save-confirm" class="btn btn-primary">Confirm</button>
           <button id="btn-save-cancel" class="btn btn-ghost">Cancel</button>
         </div>
@@ -71,20 +77,43 @@
     <section id="tab-registry" class="tab-panel">
       <div class="panel-inner">
         <div class="toolbar">
-          <input type="text"  id="filter-q"        class="search-input">
-          <input type="text"  id="filter-campaign">
-          <input type="text"  id="filter-source">
-          <input type="text"  id="filter-medium" list="filter-medium-list">
-          <datalist id="filter-medium-list"></datalist>
-          <select id="filter-status">
-            <option value="">All Status</option>
-            <option value="active">Active</option>
-            <option value="archived">Archived</option>
-          </select>
-          <input type="date" id="filter-from" title="From">
-          <input type="date" id="filter-to"   title="To">
-          <button id="btn-filter"     class="btn btn-secondary">Filter</button>
-          <button id="btn-export-csv" class="btn btn-ghost">CSV ↓</button>
+          <div class="toolbar-field toolbar-field-wide">
+            <label for="filter-q">Search</label>
+            <input type="text" id="filter-q">
+          </div>
+          <div class="toolbar-field">
+            <label for="filter-campaign">Campaign</label>
+            <input type="text" id="filter-campaign">
+          </div>
+          <div class="toolbar-field">
+            <label for="filter-source">Source</label>
+            <input type="text" id="filter-source">
+          </div>
+          <div class="toolbar-field">
+            <label for="filter-medium">Medium</label>
+            <input type="text" id="filter-medium" list="filter-medium-list">
+            <datalist id="filter-medium-list"></datalist>
+          </div>
+          <div class="toolbar-field">
+            <label for="filter-status">Status</label>
+            <select id="filter-status">
+              <option value="">All</option>
+              <option value="active">Active</option>
+              <option value="archived">Archived</option>
+            </select>
+          </div>
+          <div class="toolbar-field">
+            <label for="filter-from">From</label>
+            <input type="date" id="filter-from">
+          </div>
+          <div class="toolbar-field">
+            <label for="filter-to">To</label>
+            <input type="date" id="filter-to">
+          </div>
+          <div class="toolbar-actions">
+            <button id="btn-filter" class="btn btn-secondary">Filter</button>
+            <button id="btn-export-csv" class="btn btn-ghost">CSV ↓</button>
+          </div>
         </div>
 
         <div class="table-wrap">
@@ -115,7 +144,18 @@
             <option value="7d">Last 7 days</option>
             <option value="30d" selected>Last 30 days</option>
             <option value="90d">Last 90 days</option>
+            <option value="custom">Custom range</option>
           </select>
+          <div id="dash-custom-range" class="dash-date-range hidden">
+            <div class="toolbar-field">
+              <label for="dash-from">From</label>
+              <input type="date" id="dash-from">
+            </div>
+            <div class="toolbar-field">
+              <label for="dash-to">To</label>
+              <input type="date" id="dash-to">
+            </div>
+          </div>
           <button id="btn-ga4-refresh" class="btn btn-secondary">Refresh GA4</button>
           <span id="ga4-timestamp" class="muted"></span>
         </div>

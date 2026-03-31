@@ -90,6 +90,14 @@ const registryModule = (() => {
     }
   }
 
+  async function loadFilterSuggestions() {
+    try {
+      const { mediums } = await API.links.suggestions();
+      const list = document.getElementById('filter-medium-list');
+      list.innerHTML = mediums.map(m => `<option value="${m}">`).join('');
+    } catch { /* ignore */ }
+  }
+
   function init() {
     document.getElementById('btn-filter').addEventListener('click', load);
     document.getElementById('filter-q').addEventListener('keydown', e => { if (e.key === 'Enter') load(); });
@@ -97,6 +105,7 @@ const registryModule = (() => {
     document.getElementById('btn-export-csv').addEventListener('click', () => {
       if (currentRows.length > 0) downloadCsv(currentRows);
     });
+    loadFilterSuggestions();
   }
 
   return { init, load };

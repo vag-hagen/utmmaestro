@@ -122,8 +122,17 @@ const dashboardModule = (() => {
     if (detailChart) { detailChart.destroy(); detailChart = null; }
   }
 
+  function getRange() {
+    const sel = document.getElementById('dash-range').value;
+    if (sel !== 'custom') return sel;
+    const from = document.getElementById('dash-from').value;
+    const to   = document.getElementById('dash-to').value;
+    if (!from || !to) return '30d';
+    return `${from}_${to}`;
+  }
+
   async function load() {
-    currentRange = document.getElementById('dash-range').value;
+    currentRange = getRange();
     try {
       const { rows, summary, fetched_at } = await API.ga4.get(currentRange);
       currentRows    = rows;
@@ -160,13 +169,20 @@ const dashboardModule = (() => {
   function init() {
     initSubTabs();
 
-    document.getElementById('dash-range').addEventListener('change', load);
+    document.getElementById('dash-range').addEventListener('change', () => {
+      const custom = document.getElementById('dash-range').value === 'custom';
+      document.getElementById('dash-custom-range').classList.toggle('hidden', !custom);
+      if (!custom) load();
+    });
+    document.getElementById('dash-from').addEventListener('change', () => { if (getRange() !== '30d') load(); });
+    document.getElementById('dash-to').addEventListener('change', () => { if (getRange() !== '30d') load(); });
 
     document.getElementById('btn-ga4-refresh').addEventListener('click', async () => {
       const btn = document.getElementById('btn-ga4-refresh');
       btn.disabled    = true;
       btn.textContent = 'Refreshing...';
       try {
+        currentRange = getRange();
         const { rows, summary, fetched_at } = await API.ga4.refresh(currentRange);
         currentRows    = rows;
         currentSummary = summary;

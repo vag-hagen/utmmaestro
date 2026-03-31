@@ -104,7 +104,7 @@ header {
 /* ── PANELS ── */
 .tab-panel { display: none; }
 .tab-panel.active { display: block; }
-.panel-inner { padding: 32px; max-width: 1000px; margin: 0 auto; }
+.panel-inner { padding: 32px; max-width: 80%; margin: 0 auto; }
 
 /* ── FORMS ── */
 .form-row {
@@ -264,21 +264,28 @@ select option { background: var(--bg-surface); color: var(--text); }
   color: var(--red);
 }
 
+/* ── SAVE DRAWER ── */
+.drawer-field { display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 160px; }
+.drawer-field label { font-size: 10px; }
+
 /* ── TOOLBAR ── */
 .toolbar {
-  align-items: center;
+  align-items: flex-end;
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 12px;
   margin-bottom: 20px;
-  padding: 16px;
+  padding: 18px;
   background: var(--bg-surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
 }
-.toolbar input, .toolbar select { flex: 1; min-width: 100px; width: auto; font-size: 13px; padding: 10px 14px; }
-.search-input { min-width: 220px; }
+.toolbar-field { display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 100px; }
+.toolbar-field-wide { min-width: 200px; flex: 2; }
+.toolbar-field label { font-size: 10px; white-space: nowrap; }
+.toolbar-field input, .toolbar-field select { font-size: 13px; padding: 10px 14px; }
+.toolbar-actions { display: flex; gap: 8px; align-items: flex-end; padding-bottom: 1px; }
 
 /* ── TABLE ── */
 .table-wrap {
@@ -495,6 +502,14 @@ td.url-cell:hover { text-shadow: var(--blue-glow-sm); }
 ::-webkit-scrollbar-track { background: var(--bg); }
 ::-webkit-scrollbar-thumb { background: var(--border-bright); border-radius: 4px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--blue); }
+
+/* ── DASHBOARD DATE RANGE ── */
+.dash-date-range {
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
+}
+.dash-date-range .toolbar-field { min-width: 140px; flex: 0; }
 
 /* ── UTILITIES ── */
 .hidden { display: none !important; }
