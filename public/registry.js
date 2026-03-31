@@ -144,6 +144,7 @@ const registryModule = (() => {
       Autocomplete.attach(document.getElementById('edit-campaign'), []);
       Autocomplete.attach(document.getElementById('edit-source'), []);
       Autocomplete.attach(document.getElementById('edit-medium'), []);
+      Autocomplete.attach(document.getElementById('edit-destination'), []);
       Autocomplete.attach(document.getElementById('edit-author'), []);
       loadEditSuggestions();
       editSuggestionsLoaded = true;
@@ -152,10 +153,11 @@ const registryModule = (() => {
 
   async function loadEditSuggestions() {
     try {
-      const { sources, mediums, campaigns, authors } = await API.links.suggestions();
+      const { sources, mediums, campaigns, authors, destinations } = await API.links.suggestions();
       Autocomplete.update(document.getElementById('edit-source'), sources);
       Autocomplete.update(document.getElementById('edit-medium'), mediums);
       Autocomplete.update(document.getElementById('edit-campaign'), campaigns);
+      Autocomplete.update(document.getElementById('edit-destination'), destinations);
       Autocomplete.update(document.getElementById('edit-author'), authors);
     } catch { /* ignore */ }
   }

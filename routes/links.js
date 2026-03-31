@@ -8,7 +8,8 @@ router.get('/suggestions', (_req, res) => {
   const mediums    = db.prepare('SELECT DISTINCT medium FROM links ORDER BY medium').all().map(r => r.medium);
   const campaigns  = db.prepare('SELECT DISTINCT campaign FROM links ORDER BY campaign').all().map(r => r.campaign);
   const authors    = db.prepare('SELECT DISTINCT created_by FROM links WHERE created_by IS NOT NULL ORDER BY created_by').all().map(r => r.created_by);
-  res.json({ sources, mediums, campaigns, authors });
+  const destinations = db.prepare('SELECT DISTINCT destination_url FROM links ORDER BY destination_url').all().map(r => r.destination_url);
+  res.json({ sources, mediums, campaigns, authors, destinations });
 });
 
 // GET /api/links/sources — must be before /:id

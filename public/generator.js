@@ -42,7 +42,8 @@ const generatorModule = (() => {
 
   async function loadSuggestions() {
     try {
-      const { sources, mediums, campaigns, authors } = await API.links.suggestions();
+      const { sources, mediums, campaigns, authors, destinations } = await API.links.suggestions();
+      Autocomplete.update(document.getElementById('destination_url'), destinations);
       Autocomplete.update(document.getElementById('source'), sources);
       Autocomplete.update(document.getElementById('medium'), mediums);
       Autocomplete.update(document.getElementById('campaign'), campaigns);
@@ -80,6 +81,7 @@ const generatorModule = (() => {
       document.getElementById(id).addEventListener('input', updatePreview)
     );
 
+    Autocomplete.attach(document.getElementById('destination_url'), []);
     Autocomplete.attach(document.getElementById('source'), []);
     Autocomplete.attach(document.getElementById('medium'), []);
     Autocomplete.attach(document.getElementById('campaign'), []);
