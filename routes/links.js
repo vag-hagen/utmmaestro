@@ -98,17 +98,32 @@ router.post('/', (req, res) => {
   if (!campaign || !source || !medium || !destination_url || !utm_url) {
     return res.status(400).json({ error: 'Missing required fields: campaign, source, medium, destination_url, utm_url' });
   }
+  // Check for duplicate campaign+source+medium+destination
+  const existing = db.prepare(
+    'SELECT id, slug, created_at FROM links WHERE campaign = ? AND source = ? AND medium = ? AND destination_url = ?'
+  ).get(campaign, source, medium, destination_url);
+
   const slug = uniqueSlug();
   const result = db.prepare(
     'INSERT INTO links (campaign, source, medium, content, destination_url, utm_url, created_by, note, slug) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)'
   ).run(campaign, source, medium, content || null, destination_url, utm_url, created_by || null, note || null, slug);
-  res.status(201).json(db.prepare('SELECT * FROM links WHERE id = ?').get(result.lastInsertRowid));
+  const created = db.prepare('SELECT * FROM links WHERE id = ?').get(result.lastInsertRowid);
+
+  if (existing) {
+    created._duplicate = { id: existing.id, slug: existing.slug, created_at: existing.created_at };
+  }
+  res.status(201).json(created);
 });
 
 // PATCH /api/links/:id
 router.patch('/:id', (req, res) => {
   const link = db.prepare('SELECT id FROM links WHERE id = ?').get(req.params.id);
   if (!link) return res.status(404).json({ error: 'Not found' });
+  // Hard block: slug must be unique
+  if (req.body.slug !== undefined && req.body.slug !== '') {
+    const conflict = db.prepare('SELECT id FROM links WHERE slug = ? AND id != ?').get(req.body.slug, req.params.id);
+    if (conflict) return res.status(409).json({ error: `Short link "${req.body.slug}" is already taken` });
+  }
   const allowed = ['campaign', 'source', 'medium', 'content', 'destination_url', 'utm_url', 'created_by', 'note', 'status', 'slug'];
   for (const key of allowed) {
     if (req.body[key] !== undefined) {

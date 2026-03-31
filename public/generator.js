@@ -26,7 +26,7 @@ const generatorModule = (() => {
     el.textContent = message;
     el.className = `feedback ${type}`;
     el.classList.remove('hidden');
-    setTimeout(() => el.classList.add('hidden'), 3000);
+    setTimeout(() => el.classList.add('hidden'), type === 'error' ? 8000 : 3000);
   }
 
   function openSaveDrawer() {
@@ -70,7 +70,12 @@ const generatorModule = (() => {
       });
       closeSaveDrawer();
       const shortLink = saved.slug ? `https://utm.versino.de/${saved.slug}` : '';
-      showFeedback(shortLink ? `Saved — Short link: ${shortLink}` : 'Link saved');
+      if (saved._duplicate) {
+        const d = saved._duplicate;
+        showFeedback(`Saved — but a duplicate exists (ID ${d.id}, slug: ${d.slug || '—'}, created: ${formatDate(d.created_at)})`, 'error');
+      } else {
+        showFeedback(shortLink ? `Saved — Short link: ${shortLink}` : 'Link saved');
+      }
       if (shortLink) copyToClipboard(shortLink);
       loadSuggestions();
     } catch (err) {
