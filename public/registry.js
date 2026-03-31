@@ -2,6 +2,7 @@ const registryModule = (() => {
   let currentRows = [];
   let ga4Summary  = [];
   let sorter      = null;
+  let editSuggestionsLoaded = false;
 
   function ga4ForLink(link) {
     return ga4Summary.find(
@@ -9,7 +10,6 @@ const registryModule = (() => {
     ) || null;
   }
 
-  // Enrich rows with GA4 data for sorting on _sessions / _conversions
   function enrichRows(rows) {
     return rows.map(r => {
       const g4 = ga4ForLink(r);
@@ -47,6 +47,7 @@ const registryModule = (() => {
     const g4 = ga4ForLink(link);
     const archived = link.status === 'archived';
     const tr = document.createElement('tr');
+    tr.dataset.linkId = link.id;
 
     tr.innerHTML = `
       <td title="${escapeHtml(link.created_at)}">${formatDate(link.created_at)}</td>
@@ -61,14 +62,18 @@ const registryModule = (() => {
       <td>${g4 ? g4.sessions.toLocaleString() : '—'}</td>
       <td>${g4 ? g4.conversions.toLocaleString() : '—'}</td>
       <td class="row-actions">
-        <button class="btn-icon" title="Copy UTM URL" data-action="copy" data-url="${escapeHtml(link.utm_url)}">⧉</button>
-        <button class="btn-icon" title="QR Code" data-action="qr" data-url="${escapeHtml(link.utm_url)}" data-campaign="${escapeHtml(link.campaign)}">⊞</button>
-        <button class="btn-icon" title="Edit" data-action="edit" data-id="${link.id}" data-note="${escapeHtml(link.note)}" data-author="${escapeHtml(link.created_by)}">✎</button>
-        <button class="btn-icon" title="${archived ? 'Reactivate' : 'Archive'}" data-action="archive" data-id="${link.id}" data-new-status="${archived ? 'active' : 'archived'}">${archived ? '↩' : '⊠'}</button>
-        <button class="btn-icon danger" title="Delete" data-action="delete" data-id="${link.id}">✕</button>
+        <button class="btn-icon" title="Copy UTM URL" data-action="copy">⧉</button>
+        <button class="btn-icon" title="QR Code" data-action="qr">⊞</button>
+        <button class="btn-icon" title="Edit" data-action="edit">✎</button>
+        <button class="btn-icon" title="${archived ? 'Reactivate' : 'Archive'}" data-action="archive" data-new-status="${archived ? 'active' : 'archived'}">${archived ? '↩' : '⊠'}</button>
+        <button class="btn-icon danger" title="Delete" data-action="delete">✕</button>
       </td>
     `;
     return tr;
+  }
+
+  function findLink(id) {
+    return currentRows.find(r => String(r.id) === String(id));
   }
 
   function render(rows) {
@@ -99,35 +104,110 @@ const registryModule = (() => {
   async function handleAction(e) {
     const btn = e.target.closest('[data-action]');
     if (!btn) return;
-    const { action, id, url, newStatus, campaign, note, author } = btn.dataset;
+    const action = btn.dataset.action;
+    const row = btn.closest('tr');
+    const id = row?.dataset.linkId;
+    const link = id ? findLink(id) : null;
 
-    if (action === 'copy') {
-      copyToClipboard(url);
-    } else if (action === 'qr') {
-      await downloadQr(url, campaign).catch(err => alert(err.message));
-    } else if (action === 'edit') {
-      openEditDialog(id, note || '', author || '');
-    } else if (action === 'archive') {
-      await API.links.update(id, { status: newStatus }).catch(console.error);
+    if (action === 'copy' && link) {
+      copyToClipboard(link.utm_url);
+    } else if (action === 'qr' && link) {
+      await downloadQr(link.utm_url, link).catch(err => alert(err.message));
+    } else if (action === 'edit' && link) {
+      openEditModal(link);
+    } else if (action === 'archive' && link) {
+      await API.links.update(id, { status: btn.dataset.newStatus }).catch(console.error);
       load();
-    } else if (action === 'delete') {
+    } else if (action === 'delete' && link) {
       if (!confirm('Delete this link?')) return;
       await API.links.remove(id).catch(console.error);
       load();
     }
   }
 
-  function openEditDialog(id, currentNote, currentAuthor) {
-    const newNote   = prompt('Note:', currentNote);
-    if (newNote === null) return; // cancelled
-    const newAuthor = prompt('Author:', currentAuthor);
-    if (newAuthor === null) return;
-    const patch = {};
-    if (newNote !== currentNote)     patch.note = newNote;
-    if (newAuthor !== currentAuthor) patch.created_by = newAuthor;
-    if (Object.keys(patch).length === 0) return;
-    API.links.update(id, patch).then(() => load()).catch(console.error);
+  // ── Edit Modal ──
+
+  function openEditModal(link) {
+    document.getElementById('edit-id').value          = link.id;
+    document.getElementById('edit-campaign').value     = link.campaign || '';
+    document.getElementById('edit-source').value       = link.source || '';
+    document.getElementById('edit-medium').value       = link.medium || '';
+    document.getElementById('edit-content').value      = link.content || '';
+    document.getElementById('edit-destination').value  = link.destination_url || '';
+    document.getElementById('edit-author').value       = link.created_by || '';
+    document.getElementById('edit-note').value         = link.note || '';
+    document.getElementById('edit-status').value       = link.status || 'active';
+    updateEditPreview();
+    document.getElementById('edit-modal').classList.remove('hidden');
+
+    if (!editSuggestionsLoaded) {
+      Autocomplete.attach(document.getElementById('edit-campaign'), []);
+      Autocomplete.attach(document.getElementById('edit-source'), []);
+      Autocomplete.attach(document.getElementById('edit-medium'), []);
+      Autocomplete.attach(document.getElementById('edit-author'), []);
+      loadEditSuggestions();
+      editSuggestionsLoaded = true;
+    }
   }
+
+  async function loadEditSuggestions() {
+    try {
+      const { sources, mediums, campaigns, authors } = await API.links.suggestions();
+      Autocomplete.update(document.getElementById('edit-source'), sources);
+      Autocomplete.update(document.getElementById('edit-medium'), mediums);
+      Autocomplete.update(document.getElementById('edit-campaign'), campaigns);
+      Autocomplete.update(document.getElementById('edit-author'), authors);
+    } catch { /* ignore */ }
+  }
+
+  function closeEditModal() {
+    document.getElementById('edit-modal').classList.add('hidden');
+  }
+
+  function updateEditPreview() {
+    const url = buildUtmUrl({
+      destination_url: document.getElementById('edit-destination').value,
+      source:          document.getElementById('edit-source').value,
+      medium:          document.getElementById('edit-medium').value,
+      campaign:        document.getElementById('edit-campaign').value,
+      content:         document.getElementById('edit-content').value,
+    });
+    document.getElementById('edit-utm-preview').textContent = url || '—';
+  }
+
+  async function saveEdit() {
+    const id = document.getElementById('edit-id').value;
+    const campaign    = document.getElementById('edit-campaign').value.trim();
+    const source      = document.getElementById('edit-source').value.trim();
+    const medium      = document.getElementById('edit-medium').value.trim();
+    const content     = document.getElementById('edit-content').value.trim();
+    const dest        = document.getElementById('edit-destination').value.trim();
+    const created_by  = document.getElementById('edit-author').value.trim();
+    const note        = document.getElementById('edit-note').value.trim();
+    const status      = document.getElementById('edit-status').value;
+
+    const utm_url = buildUtmUrl({ destination_url: dest, source, medium, campaign, content });
+
+    try {
+      await API.links.update(id, {
+        campaign:        slugify(campaign),
+        source:          slugify(source),
+        medium:          slugify(medium),
+        content:         content ? slugify(content) : '',
+        destination_url: dest,
+        utm_url:         utm_url || '',
+        created_by,
+        note,
+        status,
+      });
+      closeEditModal();
+      load();
+    } catch (err) {
+      alert(`Save failed: ${err.message}`);
+    }
+  }
+
+  // ── Context menu copy ──
 
   function handleCellContextMenu(e) {
     const td = e.target.closest('td');
@@ -222,12 +302,16 @@ const registryModule = (() => {
     load();
   }
 
+  // ── Filter suggestions ──
+
   async function loadFilterSuggestions() {
     try {
       const { mediums } = await API.links.suggestions();
       Autocomplete.update(document.getElementById('filter-medium'), mediums);
     } catch { /* ignore */ }
   }
+
+  // ── Init ──
 
   function init() {
     sorter = Sortable.init(document.getElementById('registry-table'), {
@@ -254,6 +338,15 @@ const registryModule = (() => {
       if (fileInput.files[0]) importCsv(fileInput.files[0]);
       fileInput.value = '';
     });
+
+    // Edit modal
+    document.getElementById('btn-edit-save').addEventListener('click', saveEdit);
+    document.querySelectorAll('[data-edit-close]').forEach(el =>
+      el.addEventListener('click', closeEditModal)
+    );
+    ['edit-campaign', 'edit-source', 'edit-medium', 'edit-content', 'edit-destination'].forEach(id =>
+      document.getElementById(id).addEventListener('input', updateEditPreview)
+    );
 
     Autocomplete.attach(document.getElementById('filter-medium'), []);
     loadFilterSuggestions();

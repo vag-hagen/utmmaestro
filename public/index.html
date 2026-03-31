@@ -137,6 +137,61 @@
           </table>
         </div>
         <div id="registry-empty" class="empty-state hidden">No links found.</div>
+
+        <!-- Edit Link Modal -->
+        <div id="edit-modal" class="modal hidden">
+          <div class="modal-backdrop" data-edit-close></div>
+          <div class="modal-box">
+            <div class="modal-header">
+              <span class="modal-title">Edit Link</span>
+              <button class="btn-icon" data-edit-close title="Close">✕</button>
+            </div>
+            <input type="hidden" id="edit-id">
+            <div class="form-row">
+              <label for="edit-campaign">Campaign</label>
+              <div class="ac-wrap"><input type="text" id="edit-campaign" autocomplete="off"></div>
+            </div>
+            <div class="form-row">
+              <label for="edit-source">Source</label>
+              <div class="ac-wrap"><input type="text" id="edit-source" autocomplete="off"></div>
+            </div>
+            <div class="form-row">
+              <label for="edit-medium">Medium</label>
+              <div class="ac-wrap"><input type="text" id="edit-medium" autocomplete="off"></div>
+            </div>
+            <div class="form-row">
+              <label for="edit-content">Content</label>
+              <input type="text" id="edit-content">
+            </div>
+            <div class="form-row">
+              <label for="edit-destination">Destination URL</label>
+              <input type="url" id="edit-destination">
+            </div>
+            <div class="form-row">
+              <label for="edit-author">Author</label>
+              <div class="ac-wrap"><input type="text" id="edit-author" autocomplete="off"></div>
+            </div>
+            <div class="form-row">
+              <label for="edit-note">Note</label>
+              <input type="text" id="edit-note">
+            </div>
+            <div class="form-row">
+              <label for="edit-status">Status</label>
+              <select id="edit-status">
+                <option value="active">Active</option>
+                <option value="archived">Archived</option>
+              </select>
+            </div>
+            <div class="edit-preview">
+              <div class="preview-label">UTM URL Preview</div>
+              <div id="edit-utm-preview" class="preview-url">—</div>
+            </div>
+            <div class="edit-actions">
+              <button id="btn-edit-save" class="btn btn-primary">Save Changes</button>
+              <button class="btn btn-ghost" data-edit-close>Cancel</button>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 

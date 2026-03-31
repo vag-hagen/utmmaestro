@@ -491,6 +491,21 @@ td.url-cell:hover { text-shadow: var(--blue-glow-sm); }
   text-shadow: var(--blue-glow-sm);
 }
 
+/* ── EDIT MODAL ── */
+.edit-preview {
+  background: var(--bg-raised);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--blue-vivid);
+  border-radius: var(--radius);
+  margin: 20px 0;
+  padding: 16px;
+}
+.edit-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+}
+
 /* ── EMPTY STATE ── */
 .empty-state {
   color: var(--text-muted);

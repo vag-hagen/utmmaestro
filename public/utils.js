@@ -32,14 +32,18 @@ function extractBaseUrl(utmUrl) {
   }
 }
 
-async function downloadQr(utmUrl, label) {
+function buildQrFilename(link) {
+  const dest = slugify(link.destination_url.replace(/^https?:\/\//, '').replace(/\//g, '-').replace(/-$/, ''));
+  return `qr_utm_${slugify(link.campaign)}_${slugify(link.source)}_${slugify(link.medium)}_${dest}.png`;
+}
+
+async function downloadQr(utmUrl, link) {
   const res = await fetch(`/api/qr?url=${encodeURIComponent(utmUrl)}`);
   if (!res.ok) throw new Error('QR generation failed');
   const blob = await res.blob();
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  const name = label ? slugify(label) : 'utm-qr';
-  a.download = `${name}.png`;
+  a.download = link ? buildQrFilename(link) : 'qr_utm.png';
   a.click();
   URL.revokeObjectURL(a.href);
 }

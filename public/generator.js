@@ -93,8 +93,8 @@ const generatorModule = (() => {
 
     document.getElementById('btn-qr').addEventListener('click', async () => {
       if (!currentUtmUrl) return;
-      const campaign = document.getElementById('campaign').value;
-      try { await downloadQr(currentUtmUrl, campaign); }
+      const fields = getFields();
+      try { await downloadQr(currentUtmUrl, { campaign: fields.campaign, source: fields.source, medium: fields.medium, destination_url: fields.destination_url }); }
       catch (err) { showFeedback(err.message, 'error'); }
     });
 
