@@ -27,18 +27,15 @@
           </div>
           <div class="form-row">
             <label for="source">Source <span class="required">*</span></label>
-            <input type="text" id="source" list="source-list" required>
-            <datalist id="source-list"></datalist>
+            <div class="ac-wrap"><input type="text" id="source" required autocomplete="off"></div>
           </div>
           <div class="form-row">
             <label for="medium">Medium <span class="required">*</span></label>
-            <input type="text" id="medium" list="medium-list" required>
-            <datalist id="medium-list"></datalist>
+            <div class="ac-wrap"><input type="text" id="medium" required autocomplete="off"></div>
           </div>
           <div class="form-row">
             <label for="campaign">Campaign <span class="required">*</span></label>
-            <input type="text" id="campaign" list="campaign-list" required>
-            <datalist id="campaign-list"></datalist>
+            <div class="ac-wrap"><input type="text" id="campaign" required autocomplete="off"></div>
           </div>
           <div class="form-row">
             <label for="content">Content <span class="optional">(optional)</span></label>
@@ -91,8 +88,7 @@
           </div>
           <div class="toolbar-field">
             <label for="filter-medium">Medium</label>
-            <input type="text" id="filter-medium" list="filter-medium-list">
-            <datalist id="filter-medium-list"></datalist>
+            <div class="ac-wrap"><input type="text" id="filter-medium" autocomplete="off"></div>
           </div>
           <div class="toolbar-field">
             <label for="filter-status">Status</label>
@@ -206,6 +202,7 @@
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+  <script src="autocomplete.js"></script>
   <script src="utils.js"></script>
   <script src="api.js"></script>
   <script src="generator.js"></script>

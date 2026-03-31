@@ -129,8 +129,7 @@ const registryModule = (() => {
   async function loadFilterSuggestions() {
     try {
       const { mediums } = await API.links.suggestions();
-      const list = document.getElementById('filter-medium-list');
-      list.innerHTML = mediums.map(m => `<option value="${m}">`).join('');
+      Autocomplete.update(document.getElementById('filter-medium'), mediums);
     } catch { /* ignore */ }
   }
 
@@ -150,6 +149,7 @@ const registryModule = (() => {
       if (currentRows.length > 0) downloadCsv(currentRows);
     });
 
+    Autocomplete.attach(document.getElementById('filter-medium'), []);
     loadFilterSuggestions();
   }
 

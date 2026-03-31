@@ -513,6 +513,43 @@ td.url-cell:hover { text-shadow: var(--blue-glow-sm); }
 }
 .dash-date-range .toolbar-field { min-width: 140px; flex: 0; }
 
+/* ── AUTOCOMPLETE ── */
+.ac-wrap { position: relative; width: 100%; }
+.ac-wrap input { width: 100%; }
+.ac-list {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  margin-top: 4px;
+  max-height: 220px;
+  overflow-y: auto;
+  background: var(--bg-raised);
+  border: 1px solid var(--border-bright);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+}
+.ac-option {
+  padding: 10px 14px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: background 0.1s, color 0.1s;
+  border-bottom: 1px solid var(--border);
+}
+.ac-option:last-child { border-bottom: none; }
+.ac-option:hover, .ac-option.ac-active {
+  background: var(--blue-dim);
+  color: var(--text);
+}
+.ac-match {
+  color: var(--blue-vivid);
+  font-weight: 700;
+}
+.ac-list::-webkit-scrollbar { width: 6px; }
+.ac-list::-webkit-scrollbar-thumb { background: var(--border-bright); border-radius: 3px; }
+
 /* ── COPY TOAST ── */
 .copy-toast {
   position: fixed;

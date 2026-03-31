@@ -40,17 +40,12 @@ const generatorModule = (() => {
     document.getElementById('save-note').value  = '';
   }
 
-  function populateDatalist(id, values) {
-    const list = document.getElementById(id);
-    list.innerHTML = values.map(v => `<option value="${v}">`).join('');
-  }
-
   async function loadSuggestions() {
     try {
       const { sources, mediums, campaigns } = await API.links.suggestions();
-      populateDatalist('source-list', sources);
-      populateDatalist('medium-list', mediums);
-      populateDatalist('campaign-list', campaigns);
+      Autocomplete.update(document.getElementById('source'), sources);
+      Autocomplete.update(document.getElementById('medium'), mediums);
+      Autocomplete.update(document.getElementById('campaign'), campaigns);
     } catch { /* silently ignore on first load */ }
   }
 
@@ -83,6 +78,10 @@ const generatorModule = (() => {
     ['destination_url', 'source', 'medium', 'campaign', 'content'].forEach(id =>
       document.getElementById(id).addEventListener('input', updatePreview)
     );
+
+    Autocomplete.attach(document.getElementById('source'), []);
+    Autocomplete.attach(document.getElementById('medium'), []);
+    Autocomplete.attach(document.getElementById('campaign'), []);
 
     document.getElementById('btn-copy').addEventListener('click', () => {
       if (!currentUtmUrl) return;
