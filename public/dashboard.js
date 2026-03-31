@@ -160,6 +160,25 @@ const dashboardModule = (() => {
     }
   }
 
+  function exportDashboardCsv() {
+    if (currentSummary.length === 0) return;
+    const headers = ['campaign', 'source', 'medium', 'sessions', 'users', 'conversions', 'conv_rate'];
+    const rows = currentSummary.map(r => {
+      const rate = r.sessions > 0 ? ((r.conversions / r.sessions) * 100).toFixed(1) + '%' : '0%';
+      return [r.campaign, r.source, r.medium, r.sessions || 0, r.users || 0, r.conversions || 0, rate];
+    });
+    const lines = [
+      headers.join(','),
+      ...rows.map(r => r.map(v => escapeCsv(v)).join(',')),
+    ];
+    const blob = new Blob([lines.join('\n')], { type: 'text/csv;charset=utf-8;' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `ga4-campaigns-${currentRange}.csv`;
+    a.click();
+    URL.revokeObjectURL(a.href);
+  }
+
   function updateTimestamp(ts) {
     document.getElementById('ga4-timestamp').textContent = ts
       ? `Last updated: ${new Date(ts).toLocaleString()}`
@@ -192,6 +211,8 @@ const dashboardModule = (() => {
       // Auto-load for preset ranges, not for custom (user picks dates then hits Refresh)
       if (document.getElementById('dash-range').value !== 'custom') fetchAndRender();
     });
+
+    document.getElementById('btn-dash-export').addEventListener('click', exportDashboardCsv);
 
     document.getElementById('btn-ga4-refresh').addEventListener('click', async () => {
       const btn = document.getElementById('btn-ga4-refresh');
