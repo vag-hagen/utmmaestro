@@ -41,6 +41,14 @@
             <label for="content">Content <span class="optional">(optional)</span></label>
             <input type="text" id="content">
           </div>
+          <div class="form-row">
+            <label for="created_by">Author <span class="optional">(optional)</span></label>
+            <div class="ac-wrap"><input type="text" id="created_by" autocomplete="off"></div>
+          </div>
+          <div class="form-row">
+            <label for="save-note">Note <span class="optional">(optional)</span></label>
+            <input type="text" id="save-note">
+          </div>
         </form>
 
         <div class="preview-box">
@@ -51,19 +59,6 @@
             <button id="btn-qr"   class="btn btn-secondary" disabled>QR ↓</button>
             <button id="btn-save" class="btn btn-primary"   disabled>Save</button>
           </div>
-        </div>
-
-        <div id="save-drawer" class="save-drawer hidden">
-          <div class="drawer-field">
-            <label for="created_by">Author</label>
-            <div class="ac-wrap"><input type="text" id="created_by" autocomplete="off"></div>
-          </div>
-          <div class="drawer-field">
-            <label for="save-note">Note</label>
-            <input type="text" id="save-note">
-          </div>
-          <button id="btn-save-confirm" class="btn btn-primary">Confirm</button>
-          <button id="btn-save-cancel" class="btn btn-ghost">Cancel</button>
         </div>
 
         <div id="generator-feedback" class="feedback hidden"></div>

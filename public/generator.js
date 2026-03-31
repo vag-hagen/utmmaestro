@@ -29,17 +29,6 @@ const generatorModule = (() => {
     setTimeout(() => el.classList.add('hidden'), type === 'error' ? 8000 : 3000);
   }
 
-  function openSaveDrawer() {
-    document.getElementById('save-drawer').classList.remove('hidden');
-    document.getElementById('created_by').focus();
-  }
-
-  function closeSaveDrawer() {
-    document.getElementById('save-drawer').classList.add('hidden');
-    document.getElementById('created_by').value = '';
-    document.getElementById('save-note').value  = '';
-  }
-
   async function loadSuggestions() {
     try {
       const { sources, mediums, campaigns, authors, destinations } = await API.links.suggestions();
@@ -62,7 +51,6 @@ const generatorModule = (() => {
     const dest       = extractBaseUrl(currentUtmUrl);
 
     try {
-      // Check for duplicate before saving
       const { duplicate } = await API.request('GET',
         `/links/check-duplicate?${new URLSearchParams({ campaign, source, medium, destination_url: dest })}`);
       if (duplicate) {
@@ -84,7 +72,6 @@ const generatorModule = (() => {
         created_by:      created_by || undefined,
         note:            note || undefined,
       });
-      closeSaveDrawer();
       const shortLink = saved.slug ? `https://utm.versino.de/${saved.slug}` : '';
       showFeedback(shortLink ? `Saved — Short link: ${shortLink}` : 'Link saved');
       if (shortLink) copyToClipboard(shortLink);
@@ -118,9 +105,7 @@ const generatorModule = (() => {
       catch (err) { showFeedback(err.message, 'error'); }
     });
 
-    document.getElementById('btn-save').addEventListener('click', openSaveDrawer);
-    document.getElementById('btn-save-cancel').addEventListener('click', closeSaveDrawer);
-    document.getElementById('btn-save-confirm').addEventListener('click', saveLink);
+    document.getElementById('btn-save').addEventListener('click', saveLink);
 
     loadSuggestions();
   }
