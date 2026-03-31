@@ -19,6 +19,7 @@ const API = {
     remove:  (id)          => API.request('DELETE', `/links/${id}`),
     sources:     ()        => API.request('GET', '/links/sources'),
     suggestions: ()        => API.request('GET', '/links/suggestions'),
+    clicks: (params = {})  => API.request('GET', `/links/clicks?${new URLSearchParams(params)}`),
   },
 
   ga4: {

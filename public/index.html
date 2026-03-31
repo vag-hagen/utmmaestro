@@ -237,6 +237,7 @@
             <table id="campaigns-table">
               <thead>
                 <tr>
+                  <th></th>
                   <th data-sort-key="campaign">Campaign</th>
                   <th data-sort-key="source">Source</th>
                   <th data-sort-key="medium">Medium</th>
@@ -244,6 +245,7 @@
                   <th data-sort-key="users">Users</th>
                   <th data-sort-key="conversions">Conversions</th>
                   <th data-sort-key="_rate">Conv. Rate</th>
+                  <th data-sort-key="_clicks">Clicks</th>
                 </tr>
               </thead>
               <tbody id="campaigns-tbody"></tbody>
@@ -267,6 +269,7 @@
               <button id="modal-close" class="btn-icon" title="Close">✕</button>
             </div>
             <div class="modal-metrics">
+              <div class="metric-card"><div class="metric-value" id="detail-clicks">—</div><div class="metric-label">Clicks</div></div>
               <div class="metric-card"><div class="metric-value" id="detail-sessions">—</div><div class="metric-label">Sessions</div></div>
               <div class="metric-card"><div class="metric-value" id="detail-conversions">—</div><div class="metric-label">Conversions</div></div>
               <div class="metric-card"><div class="metric-value" id="detail-bounce">—</div><div class="metric-label">Bounce Rate</div></div>
@@ -274,6 +277,9 @@
             </div>
             <div class="chart-container">
               <canvas id="detail-chart"></canvas>
+            </div>
+            <div class="chart-container" style="margin-top: 20px;">
+              <canvas id="detail-clicks-chart"></canvas>
             </div>
           </div>
         </div>

@@ -1,9 +1,11 @@
 const dashboardModule = (() => {
-  let channelsChart = null;
-  let detailChart   = null;
-  let currentRange  = '30d';
-  let currentRows   = [];
+  let channelsChart  = null;
+  let detailChart    = null;
+  let clicksChart    = null;
+  let currentRange   = '30d';
+  let currentRows    = [];
   let currentSummary = [];
+  let clicksData     = { summary: [], daily: [] };
   let sorter         = null;
 
   function aggregateChannels(summary) {
@@ -16,6 +18,25 @@ const dashboardModule = (() => {
     return map;
   }
 
+  function clicksForCampaign(campaign, source, medium) {
+    return clicksData.summary.find(
+      c => c.campaign === campaign && c.source === source && c.medium === medium
+    ) || null;
+  }
+
+  function dateRangeToDates(range) {
+    if (range.includes('_')) {
+      const [from, to] = range.split('_');
+      return { from, to };
+    }
+    const to = new Date();
+    const from = new Date();
+    const days = range === '7d' ? 7 : range === '90d' ? 90 : 30;
+    from.setDate(to.getDate() - days);
+    const fmt = d => d.toISOString().slice(0, 10);
+    return { from: fmt(from), to: fmt(to) };
+  }
+
   function renderCampaigns(summary) {
     const tbody = document.getElementById('campaigns-tbody');
     const empty = document.getElementById('campaigns-empty');
@@ -23,11 +44,15 @@ const dashboardModule = (() => {
     if (summary.length === 0) { empty.classList.remove('hidden'); return; }
     empty.classList.add('hidden');
 
-    // Enrich with _rate for sorting
-    const enriched = summary.map(r => ({
-      ...r,
-      _rate: r.sessions > 0 ? (r.conversions / r.sessions) * 100 : 0,
-    }));
+    const enriched = summary.map(r => {
+      const cd = clicksForCampaign(r.campaign, r.source, r.medium);
+      return {
+        ...r,
+        _rate: r.sessions > 0 ? (r.conversions / r.sessions) * 100 : 0,
+        _clicks: cd ? cd.clicks : 0,
+        _hasSlug: cd ? Boolean(cd.slug) : false,
+      };
+    });
     const sorted = sorter ? sorter.sort(enriched) : enriched;
 
     sorted.forEach(r => {
@@ -36,6 +61,7 @@ const dashboardModule = (() => {
       tr.style.cursor = 'pointer';
       tr.title = 'Click for details';
       tr.innerHTML = `
+        <td><span class="utm-dot ${r._hasSlug ? 'active' : ''}" title="${r._hasSlug ? 'UTM tracked' : 'No short link'}"></span></td>
         <td>${r.campaign}</td>
         <td>${r.source}</td>
         <td>${r.medium}</td>
@@ -43,6 +69,7 @@ const dashboardModule = (() => {
         <td>${(r.users    || 0).toLocaleString()}</td>
         <td>${(r.conversions || 0).toLocaleString()}</td>
         <td>${rate}</td>
+        <td>${r._clicks > 0 ? r._clicks.toLocaleString() : '—'}</td>
       `;
       tr.addEventListener('click', () => openLinkDetail(r));
       tbody.appendChild(tr);
@@ -83,16 +110,25 @@ const dashboardModule = (() => {
     document.getElementById('modal-title').textContent =
       `${summaryRow.campaign} / ${summaryRow.source} / ${summaryRow.medium}`;
 
+    const cd = clicksForCampaign(summaryRow.campaign, summaryRow.source, summaryRow.medium);
+    document.getElementById('detail-clicks').textContent      = cd ? cd.clicks.toLocaleString() : '—';
     document.getElementById('detail-sessions').textContent    = (summaryRow.sessions || 0).toLocaleString();
     document.getElementById('detail-conversions').textContent = (summaryRow.conversions || 0).toLocaleString();
     document.getElementById('detail-bounce').textContent      = summaryRow.bounce_rate != null ? `${(summaryRow.bounce_rate * 100).toFixed(1)}%` : '—';
     document.getElementById('detail-duration').textContent    = summaryRow.avg_engagement_time != null ? `${Math.round(summaryRow.avg_engagement_time)}s` : '—';
 
+    // Sessions chart (GA4)
     const dailyRows = currentRows
       .filter(r => r.campaign === summaryRow.campaign && r.source === summaryRow.source && r.medium === summaryRow.medium)
       .sort((a, b) => (a.report_date || '').localeCompare(b.report_date || ''));
-
     renderDetailChart(dailyRows);
+
+    // Clicks chart (local)
+    const dailyClicks = clicksData.daily
+      .filter(r => r.campaign === summaryRow.campaign && r.source === summaryRow.source && r.medium === summaryRow.medium)
+      .sort((a, b) => (a.click_date || '').localeCompare(b.click_date || ''));
+    renderClicksChart(dailyClicks);
+
     modal.classList.remove('hidden');
   }
 
@@ -105,7 +141,7 @@ const dashboardModule = (() => {
       data: {
         labels: dailyRows.map(r => r.report_date || ''),
         datasets: [{
-          label: 'Sessions',
+          label: 'Sessions (GA4)',
           data: dailyRows.map(r => r.sessions || 0),
           borderColor: '#38bdf8',
           backgroundColor: 'rgba(56,189,248,0.08)',
@@ -125,9 +161,46 @@ const dashboardModule = (() => {
     });
   }
 
+  function renderClicksChart(dailyClicks) {
+    const ctx = document.getElementById('detail-clicks-chart').getContext('2d');
+    if (clicksChart) clicksChart.destroy();
+
+    if (dailyClicks.length === 0) {
+      clicksChart = null;
+      ctx.canvas.parentElement.style.display = 'none';
+      return;
+    }
+    ctx.canvas.parentElement.style.display = '';
+
+    clicksChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: dailyClicks.map(r => r.click_date),
+        datasets: [{
+          label: 'Clicks (Short Link)',
+          data: dailyClicks.map(r => r.clicks || 0),
+          borderColor: '#34d399',
+          backgroundColor: 'rgba(52,211,153,0.08)',
+          tension: 0.3,
+          fill: true,
+          pointBackgroundColor: '#34d399',
+        }],
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { labels: { color: '#cbd5e1', font: { family: "'Inter', sans-serif" } } } },
+        scales: {
+          x: { ticks: { color: '#94a3b8', maxRotation: 45 } },
+          y: { beginAtZero: true, ticks: { color: '#94a3b8' } },
+        },
+      },
+    });
+  }
+
   function closeLinkDetail() {
     document.getElementById('link-detail-modal').classList.add('hidden');
     if (detailChart) { detailChart.destroy(); detailChart = null; }
+    if (clicksChart) { clicksChart.destroy(); clicksChart = null; }
   }
 
   function getRange() {
@@ -146,15 +219,20 @@ const dashboardModule = (() => {
 
   async function fetchAndRender() {
     const range = getRange();
-    if (!range) return; // custom selected but dates not filled yet
+    if (!range) return;
     currentRange = range;
     try {
-      const { rows, summary, fetched_at } = await API.ga4.get(currentRange);
-      currentRows    = rows;
-      currentSummary = summary;
-      renderCampaigns(summary);
-      renderChannelsChart(summary);
-      updateTimestamp(fetched_at);
+      const dates = dateRangeToDates(range);
+      const [ga4Result, clickResult] = await Promise.all([
+        API.ga4.get(currentRange),
+        API.links.clicks(dates),
+      ]);
+      currentRows    = ga4Result.rows;
+      currentSummary = ga4Result.summary;
+      clicksData     = clickResult;
+      renderCampaigns(ga4Result.summary);
+      renderChannelsChart(ga4Result.summary);
+      updateTimestamp(ga4Result.fetched_at);
     } catch (err) {
       console.error('Dashboard load failed:', err);
     }
@@ -162,10 +240,11 @@ const dashboardModule = (() => {
 
   function exportDashboardCsv() {
     if (currentSummary.length === 0) return;
-    const headers = ['campaign', 'source', 'medium', 'sessions', 'users', 'conversions', 'conv_rate'];
+    const headers = ['campaign', 'source', 'medium', 'sessions', 'users', 'conversions', 'conv_rate', 'clicks'];
     const rows = currentSummary.map(r => {
       const rate = r.sessions > 0 ? ((r.conversions / r.sessions) * 100).toFixed(1) + '%' : '0%';
-      return [r.campaign, r.source, r.medium, r.sessions || 0, r.users || 0, r.conversions || 0, rate];
+      const cd = clicksForCampaign(r.campaign, r.source, r.medium);
+      return [r.campaign, r.source, r.medium, r.sessions || 0, r.users || 0, r.conversions || 0, rate, cd ? cd.clicks : 0];
     });
     const lines = [
       headers.join(','),
@@ -208,7 +287,6 @@ const dashboardModule = (() => {
 
     document.getElementById('dash-range').addEventListener('change', () => {
       syncCustomRangeVisibility();
-      // Auto-load for preset ranges, not for custom (user picks dates then hits Refresh)
       if (document.getElementById('dash-range').value !== 'custom') fetchAndRender();
     });
 
@@ -220,12 +298,17 @@ const dashboardModule = (() => {
       btn.textContent = 'Refreshing...';
       try {
         currentRange = getRange() || '30d';
-        const { rows, summary, fetched_at } = await API.ga4.refresh(currentRange);
-        currentRows    = rows;
-        currentSummary = summary;
-        renderCampaigns(summary);
-        renderChannelsChart(summary);
-        updateTimestamp(fetched_at);
+        const dates = dateRangeToDates(currentRange);
+        const [ga4Result, clickResult] = await Promise.all([
+          API.ga4.refresh(currentRange),
+          API.links.clicks(dates),
+        ]);
+        currentRows    = ga4Result.rows;
+        currentSummary = ga4Result.summary;
+        clicksData     = clickResult;
+        renderCampaigns(ga4Result.summary);
+        renderChannelsChart(ga4Result.summary);
+        updateTimestamp(ga4Result.fetched_at);
       } catch (err) {
         alert(`GA4 error: ${err.message}`);
       } finally {
@@ -238,7 +321,6 @@ const dashboardModule = (() => {
     document.querySelector('.modal-backdrop').addEventListener('click', closeLinkDetail);
   }
 
-  // Called when switching to dashboard tab
   function load() {
     syncCustomRangeVisibility();
     fetchAndRender();

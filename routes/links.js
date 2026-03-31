@@ -25,6 +25,40 @@ router.get('/suggestions', (_req, res) => {
   res.json({ sources, mediums, campaigns, authors, destinations });
 });
 
+// GET /api/links/clicks — aggregated click stats per campaign/source/medium
+router.get('/clicks', (req, res) => {
+  const { from, to } = req.query;
+  let dateSql = '';
+  const params = [];
+  if (from) { dateSql += ' AND c.clicked_at >= ?'; params.push(from); }
+  if (to)   { dateSql += ' AND c.clicked_at <= ?'; params.push(`${to}T23:59:59`); }
+
+  // Summary: clicks per campaign/source/medium
+  const summary = db.prepare(`
+    SELECT l.campaign, l.source, l.medium, l.slug,
+           COUNT(c.id) as clicks
+    FROM links l
+    LEFT JOIN clicks c ON c.link_id = l.id ${dateSql ? 'AND 1=1' + dateSql : ''}
+    WHERE l.slug IS NOT NULL
+    GROUP BY l.campaign, l.source, l.medium
+    ORDER BY clicks DESC
+  `).all(...params);
+
+  // Daily: clicks per date per campaign/source/medium
+  const daily = db.prepare(`
+    SELECT l.campaign, l.source, l.medium,
+           DATE(c.clicked_at) as click_date,
+           COUNT(c.id) as clicks
+    FROM clicks c
+    JOIN links l ON l.id = c.link_id
+    WHERE 1=1 ${dateSql}
+    GROUP BY l.campaign, l.source, l.medium, DATE(c.clicked_at)
+    ORDER BY click_date
+  `).all(...params);
+
+  res.json({ summary, daily });
+});
+
 // GET /api/links/sources — must be before /:id
 router.get('/sources', (_req, res) => {
   const rows = db.prepare('SELECT DISTINCT source FROM links ORDER BY source').all();
