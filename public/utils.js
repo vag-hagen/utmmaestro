@@ -32,21 +32,30 @@ function extractBaseUrl(utmUrl) {
   }
 }
 
-function buildQrFilename(link) {
+function buildQrFilename(link, ext) {
   const dest = slugify(link.destination_url.replace(/^https?:\/\//, '').replace(/\//g, '-').replace(/-$/, ''));
-  return `qr_utm_${slugify(link.campaign)}_${slugify(link.source)}_${slugify(link.medium)}_${dest}.svg`;
+  return `qr_utm_${slugify(link.campaign)}_${slugify(link.source)}_${slugify(link.medium)}_${dest}.${ext}`;
 }
 
-async function downloadQr(utmUrl, link) {
-  const res = await fetch(`/api/qr?url=${encodeURIComponent(utmUrl)}&format=svg`);
+async function downloadQr(utmUrl, link, format = 'svg') {
+  const res = await fetch(`/api/qr?url=${encodeURIComponent(utmUrl)}&format=${format}`);
   if (!res.ok) throw new Error('QR generation failed');
   const blob = await res.blob();
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  const name = link ? buildQrFilename(link) : 'qr_utm.svg';
-  a.download = name;
+  a.download = link ? buildQrFilename(link, format) : `qr_utm.${format}`;
   a.click();
   URL.revokeObjectURL(a.href);
+}
+
+function showQrMenu(e, utmUrl, link) {
+  e.preventDefault();
+  e.stopPropagation();
+  const rect = e.target.getBoundingClientRect();
+  ContextMenu.show(rect.left, rect.bottom + 4, [
+    { label: 'Download SVG', action: () => downloadQr(utmUrl, link, 'svg') },
+    { label: 'Download PNG', action: () => downloadQr(utmUrl, link, 'png') },
+  ]);
 }
 
 function copyToClipboard(text) {

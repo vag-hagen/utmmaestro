@@ -640,6 +640,29 @@ td.actions-cell {
 .sortable-th.sort-desc::after { content: '↓'; color: var(--blue-vivid); opacity: 1; }
 .sortable-th:hover { color: var(--text); }
 
+/* ── CONTEXT MENU ── */
+.ctx-menu {
+  position: fixed;
+  z-index: 300;
+  min-width: 160px;
+  background: var(--bg-raised);
+  border: 1px solid var(--border-bright);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  padding: 4px 0;
+}
+.ctx-item {
+  padding: 9px 16px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: background 0.1s, color 0.1s;
+}
+.ctx-item:hover {
+  background: var(--blue-dim);
+  color: var(--text);
+}
+
 /* ── COPY TOAST ── */
 .copy-toast {
   position: fixed;

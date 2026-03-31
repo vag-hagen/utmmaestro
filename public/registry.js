@@ -117,7 +117,7 @@ const registryModule = (() => {
     } else if (action === 'copy' && link) {
       copyToClipboard(link.utm_url);
     } else if (action === 'qr' && link) {
-      await downloadQr(link.utm_url, link).catch(err => alert(err.message));
+      showQrMenu(e, link.utm_url, link);
     } else if (action === 'edit' && link) {
       openEditModal(link);
     } else if (action === 'archive' && link) {

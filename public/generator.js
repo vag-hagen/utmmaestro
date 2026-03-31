@@ -98,11 +98,10 @@ const generatorModule = (() => {
       showFeedback('Copied to clipboard');
     });
 
-    document.getElementById('btn-qr').addEventListener('click', async () => {
+    document.getElementById('btn-qr').addEventListener('click', (e) => {
       if (!currentUtmUrl) return;
       const fields = getFields();
-      try { await downloadQr(currentUtmUrl, { campaign: fields.campaign, source: fields.source, medium: fields.medium, destination_url: fields.destination_url }); }
-      catch (err) { showFeedback(err.message, 'error'); }
+      showQrMenu(e, currentUtmUrl, { campaign: fields.campaign, source: fields.source, medium: fields.medium, destination_url: fields.destination_url });
     });
 
     document.getElementById('btn-save').addEventListener('click', saveLink);
