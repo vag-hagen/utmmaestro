@@ -1,0 +1,22 @@
+{
+  "name": "utm-maestro",
+  "version": "1.0.0",
+  "description": "UTM link generator, registry and GA4 dashboard for Versino AG",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test tests/*.test.js"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "better-sqlite3": "^12.8.0",
+    "dotenv": "^17.3.1",
+    "express": "^5.2.1",
+    "google-auth-library": "^10.6.2",
+    "node-cron": "^4.2.1",
+    "qrcode": "^1.5.4"
+  },
+  "devDependencies": {
+    "supertest": "^7.2.2"
+  }
+}
