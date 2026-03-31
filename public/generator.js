@@ -107,6 +107,13 @@ const generatorModule = (() => {
 
     document.getElementById('btn-save').addEventListener('click', saveLink);
 
+    document.getElementById('btn-more-fields').addEventListener('click', () => {
+      const extra = document.getElementById('extra-fields');
+      const btn = document.getElementById('btn-more-fields');
+      const show = extra.classList.toggle('hidden');
+      btn.textContent = show ? 'More +' : 'Less −';
+    });
+
     loadSuggestions();
   }
 

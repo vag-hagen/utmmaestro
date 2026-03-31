@@ -37,17 +37,20 @@
             <label for="campaign">Campaign <span class="required">*</span></label>
             <div class="ac-wrap"><input type="text" id="campaign" required autocomplete="off"></div>
           </div>
-          <div class="form-row">
-            <label for="content">Content <span class="optional">(optional)</span></label>
-            <input type="text" id="content">
-          </div>
-          <div class="form-row">
-            <label for="created_by">Author <span class="optional">(optional)</span></label>
-            <div class="ac-wrap"><input type="text" id="created_by" autocomplete="off"></div>
-          </div>
-          <div class="form-row">
-            <label for="save-note">Note <span class="optional">(optional)</span></label>
-            <input type="text" id="save-note">
+          <button type="button" id="btn-more-fields" class="btn-expand">More +</button>
+          <div id="extra-fields" class="hidden">
+            <div class="form-row">
+              <label for="content">Content <span class="optional">(optional)</span></label>
+              <input type="text" id="content">
+            </div>
+            <div class="form-row">
+              <label for="created_by">Author <span class="optional">(optional)</span></label>
+              <div class="ac-wrap"><input type="text" id="created_by" autocomplete="off"></div>
+            </div>
+            <div class="form-row">
+              <label for="save-note">Note <span class="optional">(optional)</span></label>
+              <input type="text" id="save-note">
+            </div>
           </div>
         </form>
 

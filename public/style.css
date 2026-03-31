@@ -264,6 +264,21 @@ select option { background: var(--bg-surface); color: var(--text); }
   color: var(--red);
 }
 
+/* ── EXPAND BUTTON ── */
+.btn-expand {
+  background: none;
+  border: none;
+  color: var(--blue-bright);
+  cursor: pointer;
+  font-family: var(--font);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 6px 0;
+  margin: 4px 0 12px 0;
+  transition: color 0.15s;
+}
+.btn-expand:hover { color: var(--blue-vivid); text-shadow: var(--blue-glow-sm); }
+
 /* ── TOOLBAR ── */
 .toolbar {
   align-items: flex-end;
