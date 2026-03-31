@@ -1,5 +1,6 @@
 const generatorModule = (() => {
   let currentUtmUrl = null;
+  let savedLink     = null; // set after save, cleared on form change
 
   function getFields() {
     return {
@@ -14,11 +15,19 @@ const generatorModule = (() => {
   function updatePreview() {
     const url = buildUtmUrl(getFields());
     currentUtmUrl = url;
+    savedLink = null;
     document.getElementById('utm-preview').textContent = url || '—';
-    const hasUrl = Boolean(url);
-    document.getElementById('btn-copy').disabled = !hasUrl;
-    document.getElementById('btn-qr').disabled   = !hasUrl;
-    document.getElementById('btn-save').disabled = !hasUrl;
+    updateButtons();
+  }
+
+  function updateButtons() {
+    const hasUrl   = Boolean(currentUtmUrl);
+    const isSaved  = Boolean(savedLink);
+    document.getElementById('btn-save').disabled = !hasUrl || isSaved;
+    document.getElementById('btn-copy').disabled = !isSaved;
+    document.getElementById('btn-qr').disabled   = !isSaved;
+    // Visual hint
+    document.getElementById('btn-save').textContent = isSaved ? 'Saved ✓' : 'Save';
   }
 
   function showFeedback(message, type = 'success') {
@@ -41,7 +50,7 @@ const generatorModule = (() => {
   }
 
   async function saveLink() {
-    if (!currentUtmUrl) return;
+    if (!currentUtmUrl || savedLink) return;
     const fields     = getFields();
     const created_by = document.getElementById('created_by').value.trim();
     const note       = document.getElementById('save-note').value.trim();
@@ -64,7 +73,7 @@ const generatorModule = (() => {
         if (!ok) return;
       }
 
-      const saved = await API.links.create({
+      savedLink = await API.links.create({
         campaign, source, medium,
         content:         fields.content ? slugify(fields.content) : undefined,
         destination_url: dest,
@@ -72,9 +81,9 @@ const generatorModule = (() => {
         created_by:      created_by || undefined,
         note:            note || undefined,
       });
-      const shortLink = saved.slug ? `https://utm.versino.de/${saved.slug}` : '';
+      const shortLink = savedLink.slug ? `https://utm.versino.de/${savedLink.slug}` : '';
       showFeedback(shortLink ? `Saved — Short link: ${shortLink}` : 'Link saved');
-      if (shortLink) copyToClipboard(shortLink);
+      updateButtons();
       loadSuggestions();
     } catch (err) {
       showFeedback(err.message, 'error');
@@ -93,15 +102,15 @@ const generatorModule = (() => {
     Autocomplete.attach(document.getElementById('created_by'), []);
 
     document.getElementById('btn-copy').addEventListener('click', () => {
-      if (!currentUtmUrl) return;
-      copyToClipboard(currentUtmUrl);
+      if (!savedLink) return;
+      const shortLink = savedLink.slug ? `https://utm.versino.de/${savedLink.slug}` : savedLink.utm_url;
+      copyToClipboard(shortLink);
       showFeedback('Copied to clipboard');
     });
 
     document.getElementById('btn-qr').addEventListener('click', (e) => {
-      if (!currentUtmUrl) return;
-      const fields = getFields();
-      showQrMenu(e, currentUtmUrl, { campaign: fields.campaign, source: fields.source, medium: fields.medium, destination_url: fields.destination_url });
+      if (!savedLink) return;
+      showQrMenu(e, savedLink.utm_url, savedLink);
     });
 
     document.getElementById('btn-save').addEventListener('click', saveLink);
