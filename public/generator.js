@@ -115,6 +115,18 @@ const generatorModule = (() => {
 
     document.getElementById('btn-save').addEventListener('click', saveLink);
 
+    document.getElementById('btn-reset').addEventListener('click', () => {
+      ['destination_url', 'source', 'medium', 'campaign', 'content', 'created_by', 'save-note'].forEach(id =>
+        document.getElementById(id).value = ''
+      );
+      const extra = document.getElementById('extra-fields');
+      if (!extra.classList.contains('hidden')) {
+        extra.classList.add('hidden');
+        document.getElementById('btn-more-fields').textContent = 'More +';
+      }
+      updatePreview();
+    });
+
     document.getElementById('btn-more-fields').addEventListener('click', () => {
       const extra = document.getElementById('extra-fields');
       const btn = document.getElementById('btn-more-fields');
