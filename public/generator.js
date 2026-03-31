@@ -40,12 +40,18 @@ const generatorModule = (() => {
     document.getElementById('save-note').value  = '';
   }
 
-  async function loadSourceSuggestions() {
+  function populateDatalist(id, values) {
+    const list = document.getElementById(id);
+    list.innerHTML = values.map(v => `<option value="${v}">`).join('');
+  }
+
+  async function loadSuggestions() {
     try {
-      const sources = await API.links.sources();
-      const list = document.getElementById('source-list');
-      list.innerHTML = sources.map(s => `<option value="${s}">`).join('');
-    } catch { /* silently ignore */ }
+      const { sources, mediums, campaigns } = await API.links.suggestions();
+      populateDatalist('source-list', sources);
+      populateDatalist('medium-list', mediums);
+      populateDatalist('campaign-list', campaigns);
+    } catch { /* silently ignore on first load */ }
   }
 
   async function saveLink() {
@@ -58,7 +64,7 @@ const generatorModule = (() => {
       await API.links.create({
         campaign:        slugify(fields.campaign),
         source:          slugify(fields.source),
-        medium:          fields.medium,
+        medium:          slugify(fields.medium),
         content:         fields.content ? slugify(fields.content) : undefined,
         destination_url: extractBaseUrl(currentUtmUrl),
         utm_url:         currentUtmUrl,
@@ -66,23 +72,22 @@ const generatorModule = (() => {
         note:            note || undefined,
       });
       closeSaveDrawer();
-      showFeedback('Link gespeichert ✓');
-      loadSourceSuggestions();
+      showFeedback('Link saved');
+      loadSuggestions();
     } catch (err) {
       showFeedback(err.message, 'error');
     }
   }
 
   function init() {
-    ['destination_url', 'source', 'campaign', 'content'].forEach(id =>
+    ['destination_url', 'source', 'medium', 'campaign', 'content'].forEach(id =>
       document.getElementById(id).addEventListener('input', updatePreview)
     );
-    document.getElementById('medium').addEventListener('change', updatePreview);
 
     document.getElementById('btn-copy').addEventListener('click', () => {
       if (!currentUtmUrl) return;
       copyToClipboard(currentUtmUrl);
-      showFeedback('In Zwischenablage kopiert ✓');
+      showFeedback('Copied to clipboard');
     });
 
     document.getElementById('btn-qr').addEventListener('click', async () => {
@@ -95,7 +100,7 @@ const generatorModule = (() => {
     document.getElementById('btn-save-cancel').addEventListener('click', closeSaveDrawer);
     document.getElementById('btn-save-confirm').addEventListener('click', saveLink);
 
-    loadSourceSuggestions();
+    loadSuggestions();
   }
 
   return { init };

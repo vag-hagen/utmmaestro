@@ -2,6 +2,14 @@ const express = require('express');
 const router = express.Router();
 const db = require('../db');
 
+// GET /api/links/suggestions — distinct values for autocomplete
+router.get('/suggestions', (_req, res) => {
+  const sources   = db.prepare('SELECT DISTINCT source FROM links ORDER BY source').all().map(r => r.source);
+  const mediums   = db.prepare('SELECT DISTINCT medium FROM links ORDER BY medium').all().map(r => r.medium);
+  const campaigns = db.prepare('SELECT DISTINCT campaign FROM links ORDER BY campaign').all().map(r => r.campaign);
+  res.json({ sources, mediums, campaigns });
+});
+
 // GET /api/links/sources — must be before /:id
 router.get('/sources', (_req, res) => {
   const rows = db.prepare('SELECT DISTINCT source FROM links ORDER BY source').all();

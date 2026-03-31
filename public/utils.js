@@ -14,7 +14,7 @@ function buildUtmUrl(fields) {
 
   const params = new URLSearchParams();
   params.set('utm_source',   slugify(source));
-  params.set('utm_medium',   medium);
+  params.set('utm_medium',   slugify(medium));
   params.set('utm_campaign', slugify(campaign));
   if (content && content.trim()) params.set('utm_content', slugify(content));
 

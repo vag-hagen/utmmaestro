@@ -14,7 +14,7 @@ const registryModule = (() => {
       q:        get('filter-q'),
       campaign: get('filter-campaign'),
       source:   get('filter-source'),
-      medium:   document.getElementById('filter-medium').value,
+      medium:   get('filter-medium'),
       status:   document.getElementById('filter-status').value,
       from:     document.getElementById('filter-from').value,
       to:       document.getElementById('filter-to').value,
@@ -35,14 +35,14 @@ const registryModule = (() => {
       <td class="url-cell" title="${link.utm_url}">${link.utm_url}</td>
       <td>${link.created_by || '—'}</td>
       <td title="${link.note || ''}">${link.note || '—'}</td>
-      <td><span class="badge ${archived ? 'badge-archived' : 'badge-active'}">${archived ? 'archiviert' : 'aktiv'}</span></td>
-      <td>${g4 ? g4.sessions.toLocaleString('de-DE') : '—'}</td>
-      <td>${g4 ? g4.conversions.toLocaleString('de-DE') : '—'}</td>
+      <td><span class="badge ${archived ? 'badge-archived' : 'badge-active'}">${archived ? 'archived' : 'active'}</span></td>
+      <td>${g4 ? g4.sessions.toLocaleString() : '—'}</td>
+      <td>${g4 ? g4.conversions.toLocaleString() : '—'}</td>
       <td class="row-actions">
-        <button class="btn-icon" title="UTM URL kopieren" data-action="copy" data-url="${link.utm_url}">⧉</button>
-        <button class="btn-icon" title="QR-Code" data-action="qr" data-url="${link.utm_url}">⊞</button>
-        <button class="btn-icon" title="${archived ? 'Reaktivieren' : 'Archivieren'}" data-action="archive" data-id="${link.id}" data-new-status="${archived ? 'active' : 'archived'}">${archived ? '↩' : '⊠'}</button>
-        <button class="btn-icon danger" title="Löschen" data-action="delete" data-id="${link.id}">✕</button>
+        <button class="btn-icon" title="Copy UTM URL" data-action="copy" data-url="${link.utm_url}">⧉</button>
+        <button class="btn-icon" title="QR Code" data-action="qr" data-url="${link.utm_url}">⊞</button>
+        <button class="btn-icon" title="${archived ? 'Reactivate' : 'Archive'}" data-action="archive" data-id="${link.id}" data-new-status="${archived ? 'active' : 'archived'}">${archived ? '↩' : '⊠'}</button>
+        <button class="btn-icon danger" title="Delete" data-action="delete" data-id="${link.id}">✕</button>
       </td>
     `;
     return tr;
@@ -84,7 +84,7 @@ const registryModule = (() => {
       await API.links.update(id, { status: newStatus }).catch(console.error);
       load();
     } else if (action === 'delete') {
-      if (!confirm('Link wirklich löschen?')) return;
+      if (!confirm('Delete this link?')) return;
       await API.links.remove(id).catch(console.error);
       load();
     }

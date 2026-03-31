@@ -26,14 +26,14 @@ const dashboardModule = (() => {
       const rate = r.sessions > 0 ? ((r.conversions / r.sessions) * 100).toFixed(1) + '%' : '—';
       const tr = document.createElement('tr');
       tr.style.cursor = 'pointer';
-      tr.title = 'Klicken für Details';
+      tr.title = 'Click for details';
       tr.innerHTML = `
         <td>${r.campaign}</td>
         <td>${r.source}</td>
         <td>${r.medium}</td>
-        <td>${(r.sessions || 0).toLocaleString('de-DE')}</td>
-        <td>${(r.users    || 0).toLocaleString('de-DE')}</td>
-        <td>${(r.conversions || 0).toLocaleString('de-DE')}</td>
+        <td>${(r.sessions || 0).toLocaleString()}</td>
+        <td>${(r.users    || 0).toLocaleString()}</td>
+        <td>${(r.conversions || 0).toLocaleString()}</td>
         <td>${rate}</td>
       `;
       tr.addEventListener('click', () => openLinkDetail(r));
@@ -47,24 +47,24 @@ const dashboardModule = (() => {
     const ctx    = document.getElementById('channels-chart').getContext('2d');
     if (channelsChart) channelsChart.destroy();
 
-    Chart.defaults.color       = '#888';
-    Chart.defaults.borderColor = 'rgba(0,87,184,0.15)';
+    Chart.defaults.color       = '#94a3b8';
+    Chart.defaults.borderColor = 'rgba(148,163,184,0.1)';
 
     channelsChart = new Chart(ctx, {
       type: 'bar',
       data: {
         labels,
         datasets: [
-          { label: 'Sessions',    data: labels.map(l => agg.get(l).sessions),    backgroundColor: 'rgba(0,87,184,0.55)',   borderColor: '#0057B8', borderWidth: 1 },
-          { label: 'Conversions', data: labels.map(l => agg.get(l).conversions), backgroundColor: 'rgba(255,106,0,0.55)',  borderColor: '#FF6A00', borderWidth: 1 },
+          { label: 'Sessions',    data: labels.map(l => agg.get(l).sessions),    backgroundColor: 'rgba(56,189,248,0.5)',  borderColor: '#38bdf8', borderWidth: 1 },
+          { label: 'Conversions', data: labels.map(l => agg.get(l).conversions), backgroundColor: 'rgba(251,191,36,0.5)', borderColor: '#fbbf24', borderWidth: 1 },
         ],
       },
       options: {
         responsive: true,
-        plugins: { legend: { labels: { color: '#e0e0e0', font: { family: "'Courier New', monospace" } } } },
+        plugins: { legend: { labels: { color: '#cbd5e1', font: { family: "'Inter', sans-serif" } } } },
         scales: {
-          x: { ticks: { color: '#888' } },
-          y: { beginAtZero: true, ticks: { color: '#888' } },
+          x: { ticks: { color: '#94a3b8' } },
+          y: { beginAtZero: true, ticks: { color: '#94a3b8' } },
         },
       },
     });
@@ -75,8 +75,8 @@ const dashboardModule = (() => {
     document.getElementById('modal-title').textContent =
       `${summaryRow.campaign} / ${summaryRow.source} / ${summaryRow.medium}`;
 
-    document.getElementById('detail-sessions').textContent    = (summaryRow.sessions || 0).toLocaleString('de-DE');
-    document.getElementById('detail-conversions').textContent = (summaryRow.conversions || 0).toLocaleString('de-DE');
+    document.getElementById('detail-sessions').textContent    = (summaryRow.sessions || 0).toLocaleString();
+    document.getElementById('detail-conversions').textContent = (summaryRow.conversions || 0).toLocaleString();
     document.getElementById('detail-bounce').textContent      = summaryRow.bounce_rate != null ? `${(summaryRow.bounce_rate * 100).toFixed(1)}%` : '—';
     document.getElementById('detail-duration').textContent    = summaryRow.avg_engagement_time != null ? `${Math.round(summaryRow.avg_engagement_time)}s` : '—';
 
@@ -99,19 +99,19 @@ const dashboardModule = (() => {
         datasets: [{
           label: 'Sessions',
           data: dailyRows.map(r => r.sessions || 0),
-          borderColor: '#0057B8',
-          backgroundColor: 'rgba(0,87,184,0.1)',
+          borderColor: '#38bdf8',
+          backgroundColor: 'rgba(56,189,248,0.08)',
           tension: 0.3,
           fill: true,
-          pointBackgroundColor: '#0057B8',
+          pointBackgroundColor: '#38bdf8',
         }],
       },
       options: {
         responsive: true,
-        plugins: { legend: { labels: { color: '#e0e0e0', font: { family: "'Courier New', monospace" } } } },
+        plugins: { legend: { labels: { color: '#cbd5e1', font: { family: "'Inter', sans-serif" } } } },
         scales: {
-          x: { ticks: { color: '#888', maxRotation: 45 } },
-          y: { beginAtZero: true, ticks: { color: '#888' } },
+          x: { ticks: { color: '#94a3b8', maxRotation: 45 } },
+          y: { beginAtZero: true, ticks: { color: '#94a3b8' } },
         },
       },
     });
@@ -138,7 +138,7 @@ const dashboardModule = (() => {
 
   function updateTimestamp(ts) {
     document.getElementById('ga4-timestamp').textContent = ts
-      ? `Zuletzt: ${new Date(ts).toLocaleString('de-DE')}`
+      ? `Last updated: ${new Date(ts).toLocaleString()}`
       : '';
   }
 
@@ -165,7 +165,7 @@ const dashboardModule = (() => {
     document.getElementById('btn-ga4-refresh').addEventListener('click', async () => {
       const btn = document.getElementById('btn-ga4-refresh');
       btn.disabled    = true;
-      btn.textContent = 'Aktualisiere…';
+      btn.textContent = 'Refreshing...';
       try {
         const { rows, summary, fetched_at } = await API.ga4.refresh(currentRange);
         currentRows    = rows;
@@ -174,10 +174,10 @@ const dashboardModule = (() => {
         renderChannelsChart(summary);
         updateTimestamp(fetched_at);
       } catch (err) {
-        alert(`GA4 Fehler: ${err.message}`);
+        alert(`GA4 error: ${err.message}`);
       } finally {
         btn.disabled    = false;
-        btn.textContent = 'GA4 aktualisieren';
+        btn.textContent = 'Refresh GA4';
       }
     });
 

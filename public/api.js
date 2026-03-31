@@ -17,7 +17,8 @@ const API = {
     create:  (body)        => API.request('POST', '/links', body),
     update:  (id, body)    => API.request('PATCH', `/links/${id}`, body),
     remove:  (id)          => API.request('DELETE', `/links/${id}`),
-    sources: ()            => API.request('GET', '/links/sources'),
+    sources:     ()        => API.request('GET', '/links/sources'),
+    suggestions: ()        => API.request('GET', '/links/suggestions'),
   },
 
   ga4: {

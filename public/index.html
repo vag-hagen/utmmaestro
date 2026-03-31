@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -23,50 +23,44 @@
         <form id="generator-form" autocomplete="off">
           <div class="form-row">
             <label for="destination_url">Destination URL <span class="required">*</span></label>
-            <input type="url" id="destination_url" placeholder="https://versino.de/…" required>
+            <input type="url" id="destination_url" required>
           </div>
           <div class="form-row">
             <label for="source">Source <span class="required">*</span></label>
-            <input type="text" id="source" placeholder="linkedin, google, email…" list="source-list" required>
+            <input type="text" id="source" list="source-list" required>
             <datalist id="source-list"></datalist>
           </div>
           <div class="form-row">
             <label for="medium">Medium <span class="required">*</span></label>
-            <select id="medium" required>
-              <option value="">— wählen —</option>
-              <option value="cpc">cpc</option>
-              <option value="social">social</option>
-              <option value="email">email</option>
-              <option value="print">print</option>
-              <option value="referral">referral</option>
-              <option value="display">display</option>
-            </select>
+            <input type="text" id="medium" list="medium-list" required>
+            <datalist id="medium-list"></datalist>
           </div>
           <div class="form-row">
-            <label for="campaign">Kampagne <span class="required">*</span></label>
-            <input type="text" id="campaign" placeholder="k202-diskrete-fertigung" required>
+            <label for="campaign">Campaign <span class="required">*</span></label>
+            <input type="text" id="campaign" list="campaign-list" required>
+            <datalist id="campaign-list"></datalist>
           </div>
           <div class="form-row">
             <label for="content">Content <span class="optional">(optional)</span></label>
-            <input type="text" id="content" placeholder="banner-1, cta-button…">
+            <input type="text" id="content">
           </div>
         </form>
 
         <div class="preview-box">
-          <div class="preview-label">UTM URL Vorschau</div>
+          <div class="preview-label">UTM URL Preview</div>
           <div id="utm-preview" class="preview-url">—</div>
           <div class="preview-actions">
-            <button id="btn-copy" class="btn btn-secondary" disabled>Kopieren</button>
+            <button id="btn-copy" class="btn btn-secondary" disabled>Copy</button>
             <button id="btn-qr"   class="btn btn-secondary" disabled>QR ↓</button>
-            <button id="btn-save" class="btn btn-primary"   disabled>Speichern</button>
+            <button id="btn-save" class="btn btn-primary"   disabled>Save</button>
           </div>
         </div>
 
         <div id="save-drawer" class="save-drawer hidden">
-          <input type="text" id="created_by" placeholder="Erstellt von (Name / Kürzel)">
-          <input type="text" id="save-note" placeholder="Notiz (optional)">
-          <button id="btn-save-confirm" class="btn btn-primary">Speichern ✓</button>
-          <button id="btn-save-cancel" class="btn btn-ghost">Abbrechen</button>
+          <input type="text" id="created_by">
+          <input type="text" id="save-note">
+          <button id="btn-save-confirm" class="btn btn-primary">Confirm</button>
+          <button id="btn-save-cancel" class="btn btn-ghost">Cancel</button>
         </div>
 
         <div id="generator-feedback" class="feedback hidden"></div>
@@ -77,26 +71,19 @@
     <section id="tab-registry" class="tab-panel">
       <div class="panel-inner">
         <div class="toolbar">
-          <input type="text"  id="filter-q"        placeholder="Suche…"       class="search-input">
-          <input type="text"  id="filter-campaign"  placeholder="Kampagne">
-          <input type="text"  id="filter-source"    placeholder="Source">
-          <select id="filter-medium">
-            <option value="">Alle Medien</option>
-            <option value="cpc">cpc</option>
-            <option value="social">social</option>
-            <option value="email">email</option>
-            <option value="print">print</option>
-            <option value="referral">referral</option>
-            <option value="display">display</option>
-          </select>
+          <input type="text"  id="filter-q"        class="search-input">
+          <input type="text"  id="filter-campaign">
+          <input type="text"  id="filter-source">
+          <input type="text"  id="filter-medium" list="filter-medium-list">
+          <datalist id="filter-medium-list"></datalist>
           <select id="filter-status">
-            <option value="">Alle Status</option>
-            <option value="active">Aktiv</option>
-            <option value="archived">Archiviert</option>
+            <option value="">All Status</option>
+            <option value="active">Active</option>
+            <option value="archived">Archived</option>
           </select>
-          <input type="date" id="filter-from" title="Von Datum">
-          <input type="date" id="filter-to"   title="Bis Datum">
-          <button id="btn-filter"     class="btn btn-secondary">Filtern</button>
+          <input type="date" id="filter-from" title="From">
+          <input type="date" id="filter-to"   title="To">
+          <button id="btn-filter"     class="btn btn-secondary">Filter</button>
           <button id="btn-export-csv" class="btn btn-ghost">CSV ↓</button>
         </div>
 
@@ -104,15 +91,15 @@
           <table id="registry-table">
             <thead>
               <tr>
-                <th>Datum</th><th>Kampagne</th><th>Source</th><th>Medium</th>
-                <th>Ziel-URL</th><th>UTM URL</th><th>Von</th><th>Notiz</th>
-                <th>Status</th><th>Sessions</th><th>Conv.</th><th>Aktionen</th>
+                <th>Date</th><th>Campaign</th><th>Source</th><th>Medium</th>
+                <th>Destination</th><th>UTM URL</th><th>By</th><th>Note</th>
+                <th>Status</th><th>Sessions</th><th>Conv.</th><th>Actions</th>
               </tr>
             </thead>
             <tbody id="registry-tbody"></tbody>
           </table>
         </div>
-        <div id="registry-empty" class="empty-state hidden">Keine Links gefunden.</div>
+        <div id="registry-empty" class="empty-state hidden">No links found.</div>
       </div>
     </section>
 
@@ -121,15 +108,15 @@
       <div class="panel-inner">
         <div class="dashboard-toolbar">
           <div class="sub-tabs">
-            <button class="sub-tab-btn active" data-subtab="campaigns">Kampagnen</button>
+            <button class="sub-tab-btn active" data-subtab="campaigns">Campaigns</button>
             <button class="sub-tab-btn"        data-subtab="channels">Channels</button>
           </div>
           <select id="dash-range">
-            <option value="7d">Letzte 7 Tage</option>
-            <option value="30d" selected>Letzte 30 Tage</option>
-            <option value="90d">Letzte 90 Tage</option>
+            <option value="7d">Last 7 days</option>
+            <option value="30d" selected>Last 30 days</option>
+            <option value="90d">Last 90 days</option>
           </select>
-          <button id="btn-ga4-refresh" class="btn btn-secondary">GA4 aktualisieren</button>
+          <button id="btn-ga4-refresh" class="btn btn-secondary">Refresh GA4</button>
           <span id="ga4-timestamp" class="muted"></span>
         </div>
 
@@ -138,14 +125,14 @@
             <table id="campaigns-table">
               <thead>
                 <tr>
-                  <th>Kampagne</th><th>Source</th><th>Medium</th>
-                  <th>Sessions</th><th>Nutzer</th><th>Conversions</th><th>Conv.-Rate</th>
+                  <th>Campaign</th><th>Source</th><th>Medium</th>
+                  <th>Sessions</th><th>Users</th><th>Conversions</th><th>Conv. Rate</th>
                 </tr>
               </thead>
               <tbody id="campaigns-tbody"></tbody>
             </table>
           </div>
-          <div id="campaigns-empty" class="empty-state hidden">Keine GA4-Daten. Klicke "GA4 aktualisieren".</div>
+          <div id="campaigns-empty" class="empty-state hidden">No GA4 data. Click "Refresh GA4".</div>
         </div>
 
         <div id="subtab-channels" class="sub-tab-panel hidden">
@@ -160,13 +147,13 @@
           <div class="modal-box">
             <div class="modal-header">
               <span id="modal-title" class="modal-title"></span>
-              <button id="modal-close" class="btn-icon" title="Schließen">✕</button>
+              <button id="modal-close" class="btn-icon" title="Close">✕</button>
             </div>
             <div class="modal-metrics">
               <div class="metric-card"><div class="metric-value" id="detail-sessions">—</div><div class="metric-label">Sessions</div></div>
               <div class="metric-card"><div class="metric-value" id="detail-conversions">—</div><div class="metric-label">Conversions</div></div>
               <div class="metric-card"><div class="metric-value" id="detail-bounce">—</div><div class="metric-label">Bounce Rate</div></div>
-              <div class="metric-card"><div class="metric-value" id="detail-duration">—</div><div class="metric-label">Ø Sitzungsdauer</div></div>
+              <div class="metric-card"><div class="metric-value" id="detail-duration">—</div><div class="metric-label">Avg. Duration</div></div>
             </div>
             <div class="chart-container">
               <canvas id="detail-chart"></canvas>
