@@ -4,6 +4,7 @@ const dashboardModule = (() => {
   let currentRange  = '30d';
   let currentRows   = [];
   let currentSummary = [];
+  let sorter         = null;
 
   function aggregateChannels(summary) {
     const map = new Map();
@@ -22,8 +23,15 @@ const dashboardModule = (() => {
     if (summary.length === 0) { empty.classList.remove('hidden'); return; }
     empty.classList.add('hidden');
 
-    summary.forEach(r => {
-      const rate = r.sessions > 0 ? ((r.conversions / r.sessions) * 100).toFixed(1) + '%' : '—';
+    // Enrich with _rate for sorting
+    const enriched = summary.map(r => ({
+      ...r,
+      _rate: r.sessions > 0 ? (r.conversions / r.sessions) * 100 : 0,
+    }));
+    const sorted = sorter ? sorter.sort(enriched) : enriched;
+
+    sorted.forEach(r => {
+      const rate = r.sessions > 0 ? r._rate.toFixed(1) + '%' : '—';
       const tr = document.createElement('tr');
       tr.style.cursor = 'pointer';
       tr.title = 'Click for details';
@@ -174,6 +182,9 @@ const dashboardModule = (() => {
   }
 
   function init() {
+    sorter = Sortable.init(document.getElementById('campaigns-table'), {
+      onSort: () => renderCampaigns(currentSummary),
+    });
     initSubTabs();
 
     document.getElementById('dash-range').addEventListener('change', () => {

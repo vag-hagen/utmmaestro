@@ -551,6 +551,28 @@ td.url-cell:hover { text-shadow: var(--blue-glow-sm); }
 .ac-list::-webkit-scrollbar { width: 6px; }
 .ac-list::-webkit-scrollbar-thumb { background: var(--border-bright); border-radius: 3px; }
 
+/* ── SORTABLE HEADERS ── */
+.sortable-th {
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+  padding-right: 22px !important;
+}
+.sortable-th::after {
+  content: '⇅';
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 10px;
+  color: var(--text-muted);
+  opacity: 0.4;
+}
+.sortable-th:hover::after { opacity: 0.8; }
+.sortable-th.sort-asc::after  { content: '↑'; color: var(--blue-vivid); opacity: 1; }
+.sortable-th.sort-desc::after { content: '↓'; color: var(--blue-vivid); opacity: 1; }
+.sortable-th:hover { color: var(--text); }
+
 /* ── COPY TOAST ── */
 .copy-toast {
   position: fixed;

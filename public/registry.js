@@ -1,11 +1,20 @@
 const registryModule = (() => {
   let currentRows = [];
   let ga4Summary  = [];
+  let sorter      = null;
 
   function ga4ForLink(link) {
     return ga4Summary.find(
       s => s.campaign === link.campaign && s.source === link.source && s.medium === link.medium
     ) || null;
+  }
+
+  // Enrich rows with GA4 data for sorting on _sessions / _conversions
+  function enrichRows(rows) {
+    return rows.map(r => {
+      const g4 = ga4ForLink(r);
+      return { ...r, _sessions: g4 ? g4.sessions : 0, _conversions: g4 ? g4.conversions : 0 };
+    });
   }
 
   function buildParams() {
@@ -62,12 +71,14 @@ const registryModule = (() => {
   }
 
   function render(rows) {
+    const enriched = enrichRows(rows);
+    const sorted = sorter ? sorter.sort(enriched) : enriched;
     const tbody = document.getElementById('registry-tbody');
     const empty = document.getElementById('registry-empty');
     tbody.innerHTML = '';
-    if (rows.length === 0) { empty.classList.remove('hidden'); return; }
+    if (sorted.length === 0) { empty.classList.remove('hidden'); return; }
     empty.classList.add('hidden');
-    rows.forEach(link => tbody.appendChild(renderRow(link)));
+    sorted.forEach(link => tbody.appendChild(renderRow(link)));
   }
 
   async function load() {
@@ -126,6 +137,76 @@ const registryModule = (() => {
     setTimeout(() => toast.remove(), 1200);
   }
 
+  // ── CSV Import ──
+
+  function parseCsvLine(line) {
+    const result = [];
+    let current = '';
+    let inQuotes = false;
+    for (let i = 0; i < line.length; i++) {
+      const ch = line[i];
+      if (inQuotes) {
+        if (ch === '"' && line[i + 1] === '"') { current += '"'; i++; }
+        else if (ch === '"') { inQuotes = false; }
+        else { current += ch; }
+      } else {
+        if (ch === '"') { inQuotes = true; }
+        else if (ch === ',') { result.push(current); current = ''; }
+        else { current += ch; }
+      }
+    }
+    result.push(current);
+    return result;
+  }
+
+  function parseCsv(text) {
+    const lines = text.split(/\r?\n/).filter(l => l.trim());
+    if (lines.length < 2) return [];
+    const headers = parseCsvLine(lines[0]).map(h => h.trim().toLowerCase());
+    return lines.slice(1).map(line => {
+      const vals = parseCsvLine(line);
+      const obj = {};
+      headers.forEach((h, i) => { obj[h] = vals[i] || ''; });
+      return obj;
+    });
+  }
+
+  async function importCsv(file) {
+    const text = await file.text();
+    const rows = parseCsv(text);
+
+    const required = ['campaign', 'source', 'medium', 'destination_url', 'utm_url'];
+    const first = rows[0];
+    if (!first) { alert('CSV is empty'); return; }
+    const missing = required.filter(f => !(f in first));
+    if (missing.length > 0) { alert(`CSV missing columns: ${missing.join(', ')}`); return; }
+
+    let imported = 0, skipped = 0;
+    for (const row of rows) {
+      if (!row.campaign || !row.source || !row.medium || !row.destination_url || !row.utm_url) {
+        skipped++;
+        continue;
+      }
+      try {
+        await API.links.create({
+          campaign:        row.campaign,
+          source:          row.source,
+          medium:          row.medium,
+          content:         row.content || undefined,
+          destination_url: row.destination_url,
+          utm_url:         row.utm_url,
+          created_by:      row.created_by || undefined,
+          note:            row.note || undefined,
+        });
+        imported++;
+      } catch {
+        skipped++;
+      }
+    }
+    alert(`Imported ${imported} links${skipped > 0 ? `, ${skipped} skipped` : ''}`);
+    load();
+  }
+
   async function loadFilterSuggestions() {
     try {
       const { mediums } = await API.links.suggestions();
@@ -134,10 +215,13 @@ const registryModule = (() => {
   }
 
   function init() {
+    sorter = Sortable.init(document.getElementById('registry-table'), {
+      onSort: () => render(currentRows),
+    });
+
     document.getElementById('btn-filter').addEventListener('click', load);
     document.getElementById('btn-reset-filter').addEventListener('click', resetFilters);
 
-    // Enter triggers filter on all text/date inputs in toolbar
     document.querySelectorAll('.toolbar input').forEach(input => {
       input.addEventListener('keydown', e => { if (e.key === 'Enter') load(); });
     });
@@ -147,6 +231,13 @@ const registryModule = (() => {
 
     document.getElementById('btn-export-csv').addEventListener('click', () => {
       if (currentRows.length > 0) downloadCsv(currentRows);
+    });
+
+    const fileInput = document.getElementById('csv-file-input');
+    document.getElementById('btn-import-csv').addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', () => {
+      if (fileInput.files[0]) importCsv(fileInput.files[0]);
+      fileInput.value = '';
     });
 
     Autocomplete.attach(document.getElementById('filter-medium'), []);

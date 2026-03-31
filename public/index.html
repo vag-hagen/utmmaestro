@@ -110,6 +110,8 @@
             <button id="btn-filter" class="btn btn-secondary">Filter</button>
             <button id="btn-reset-filter" class="btn btn-ghost">Reset</button>
             <button id="btn-export-csv" class="btn btn-ghost">CSV ↓</button>
+            <button id="btn-import-csv" class="btn btn-ghost">CSV ↑</button>
+            <input type="file" id="csv-file-input" accept=".csv" class="hidden">
           </div>
         </div>
 
@@ -117,9 +119,18 @@
           <table id="registry-table">
             <thead>
               <tr>
-                <th>Date</th><th>Campaign</th><th>Source</th><th>Medium</th>
-                <th>Destination</th><th>UTM URL</th><th>By</th><th>Note</th>
-                <th>Status</th><th>Sessions</th><th>Conv.</th><th>Actions</th>
+                <th data-sort-key="created_at">Date</th>
+                <th data-sort-key="campaign">Campaign</th>
+                <th data-sort-key="source">Source</th>
+                <th data-sort-key="medium">Medium</th>
+                <th>Destination</th>
+                <th>UTM URL</th>
+                <th data-sort-key="created_by">By</th>
+                <th>Note</th>
+                <th data-sort-key="status">Status</th>
+                <th data-sort-key="_sessions">Sessions</th>
+                <th data-sort-key="_conversions">Conv.</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody id="registry-tbody"></tbody>
@@ -162,8 +173,13 @@
             <table id="campaigns-table">
               <thead>
                 <tr>
-                  <th>Campaign</th><th>Source</th><th>Medium</th>
-                  <th>Sessions</th><th>Users</th><th>Conversions</th><th>Conv. Rate</th>
+                  <th data-sort-key="campaign">Campaign</th>
+                  <th data-sort-key="source">Source</th>
+                  <th data-sort-key="medium">Medium</th>
+                  <th data-sort-key="sessions">Sessions</th>
+                  <th data-sort-key="users">Users</th>
+                  <th data-sort-key="conversions">Conversions</th>
+                  <th data-sort-key="_rate">Conv. Rate</th>
                 </tr>
               </thead>
               <tbody id="campaigns-tbody"></tbody>
@@ -202,6 +218,7 @@
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+  <script src="sortable.js"></script>
   <script src="autocomplete.js"></script>
   <script src="utils.js"></script>
   <script src="api.js"></script>
