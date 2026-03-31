@@ -21,26 +21,39 @@ const registryModule = (() => {
     };
   }
 
+  function resetFilters() {
+    ['filter-q', 'filter-campaign', 'filter-source', 'filter-medium', 'filter-from', 'filter-to'].forEach(id =>
+      document.getElementById(id).value = ''
+    );
+    document.getElementById('filter-status').value = '';
+    load();
+  }
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
   function renderRow(link) {
     const g4 = ga4ForLink(link);
     const archived = link.status === 'archived';
     const tr = document.createElement('tr');
 
     tr.innerHTML = `
-      <td title="${link.created_at}">${formatDate(link.created_at)}</td>
-      <td title="${link.campaign}">${link.campaign}</td>
-      <td>${link.source}</td>
-      <td>${link.medium}</td>
-      <td class="url-cell" title="${link.destination_url}">${link.destination_url}</td>
-      <td class="url-cell" title="${link.utm_url}">${link.utm_url}</td>
-      <td>${link.created_by || '—'}</td>
-      <td title="${link.note || ''}">${link.note || '—'}</td>
+      <td title="${escapeHtml(link.created_at)}">${formatDate(link.created_at)}</td>
+      <td title="${escapeHtml(link.campaign)}">${escapeHtml(link.campaign)}</td>
+      <td>${escapeHtml(link.source)}</td>
+      <td>${escapeHtml(link.medium)}</td>
+      <td class="url-cell" title="${escapeHtml(link.destination_url)}">${escapeHtml(link.destination_url)}</td>
+      <td class="url-cell" title="${escapeHtml(link.utm_url)}">${escapeHtml(link.utm_url)}</td>
+      <td>${escapeHtml(link.created_by) || '—'}</td>
+      <td title="${escapeHtml(link.note)}">${escapeHtml(link.note) || '—'}</td>
       <td><span class="badge ${archived ? 'badge-archived' : 'badge-active'}">${archived ? 'archived' : 'active'}</span></td>
       <td>${g4 ? g4.sessions.toLocaleString() : '—'}</td>
       <td>${g4 ? g4.conversions.toLocaleString() : '—'}</td>
       <td class="row-actions">
-        <button class="btn-icon" title="Copy UTM URL" data-action="copy" data-url="${link.utm_url}">⧉</button>
-        <button class="btn-icon" title="QR Code" data-action="qr" data-url="${link.utm_url}">⊞</button>
+        <button class="btn-icon" title="Copy UTM URL" data-action="copy" data-url="${escapeHtml(link.utm_url)}">⧉</button>
+        <button class="btn-icon" title="QR Code" data-action="qr" data-url="${escapeHtml(link.utm_url)}">⊞</button>
         <button class="btn-icon" title="${archived ? 'Reactivate' : 'Archive'}" data-action="archive" data-id="${link.id}" data-new-status="${archived ? 'active' : 'archived'}">${archived ? '↩' : '⊠'}</button>
         <button class="btn-icon danger" title="Delete" data-action="delete" data-id="${link.id}">✕</button>
       </td>
@@ -90,6 +103,29 @@ const registryModule = (() => {
     }
   }
 
+  function handleCellContextMenu(e) {
+    const td = e.target.closest('td');
+    if (!td || td.closest('.row-actions')) return;
+    e.preventDefault();
+    const text = td.textContent.trim();
+    if (!text || text === '—') return;
+    copyToClipboard(text);
+    showCopyToast(td);
+  }
+
+  function showCopyToast(td) {
+    const existing = document.querySelector('.copy-toast');
+    if (existing) existing.remove();
+    const toast = document.createElement('div');
+    toast.className = 'copy-toast';
+    toast.textContent = 'Copied';
+    const rect = td.getBoundingClientRect();
+    toast.style.left = `${rect.left + rect.width / 2}px`;
+    toast.style.top  = `${rect.top - 6}px`;
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 1200);
+  }
+
   async function loadFilterSuggestions() {
     try {
       const { mediums } = await API.links.suggestions();
@@ -100,11 +136,20 @@ const registryModule = (() => {
 
   function init() {
     document.getElementById('btn-filter').addEventListener('click', load);
-    document.getElementById('filter-q').addEventListener('keydown', e => { if (e.key === 'Enter') load(); });
+    document.getElementById('btn-reset-filter').addEventListener('click', resetFilters);
+
+    // Enter triggers filter on all text/date inputs in toolbar
+    document.querySelectorAll('.toolbar input').forEach(input => {
+      input.addEventListener('keydown', e => { if (e.key === 'Enter') load(); });
+    });
+
     document.getElementById('registry-tbody').addEventListener('click', handleAction);
+    document.getElementById('registry-tbody').addEventListener('contextmenu', handleCellContextMenu);
+
     document.getElementById('btn-export-csv').addEventListener('click', () => {
       if (currentRows.length > 0) downloadCsv(currentRows);
     });
+
     loadFilterSuggestions();
   }
 
