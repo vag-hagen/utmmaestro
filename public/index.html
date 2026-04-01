@@ -22,25 +22,25 @@
       <div class="panel-inner">
         <form id="generator-form" autocomplete="off">
           <div class="form-row">
-            <label for="destination_url">Destination URL <span class="required">*</span></label>
+            <label for="destination_url">Destination URL <span class="required">*</span> <span class="tooltip-icon" data-tip="The target page URL where users will land.">?</span></label>
             <div class="ac-wrap"><input type="url" id="destination_url" required autocomplete="off"></div>
           </div>
           <div class="form-row">
-            <label for="source">Source <span class="required">*</span></label>
+            <label for="source">Source <span class="required">*</span> <span class="tooltip-icon" data-tip="Where does the traffic come from? (platform/sender)&#10;&#10;Examples: linkedin, google, mailing, email, instagram, youtube, webinar, doc, extern-{name}, off-banner, off-card, off-flyer">?</span></label>
             <div class="ac-wrap"><input type="text" id="source" required autocomplete="off"></div>
           </div>
           <div class="form-row">
-            <label for="medium">Medium <span class="required">*</span></label>
+            <label for="medium">Medium <span class="required">*</span> <span class="tooltip-icon" data-tip="How does the traffic arrive? (channel type)&#10;&#10;Fixed list: social, paid-social, paid-search, paid-display, paid-video, signature, link, button, qr">?</span></label>
             <div class="ac-wrap"><input type="text" id="medium" required autocomplete="off"></div>
           </div>
           <div class="form-row">
-            <label for="campaign">Campaign <span class="required">*</span></label>
+            <label for="campaign">Campaign <span class="required">*</span> <span class="tooltip-icon" data-tip="Why? (campaign/occasion)&#10;Schema: {type}-{name}-{period}&#10;&#10;Types: cmpg-, brand-, job-, event-, other-&#10;Period: q1-26, 2026-04, or omit for permanent&#10;&#10;Examples: cmpg-b1-cloud-launch-q2-26, brand-signatur, event-dsag-kongress-2026-10">?</span></label>
             <div class="ac-wrap"><input type="text" id="campaign" required autocomplete="off"></div>
           </div>
           <button type="button" id="btn-more-fields" class="btn-expand">More +</button>
           <div id="extra-fields" class="hidden">
             <div class="form-row">
-              <label for="content">Content <span class="optional">(optional)</span></label>
+              <label for="content">Content <span class="optional">(optional)</span> <span class="tooltip-icon" data-tip="What exactly? For differentiation within a campaign.&#10;&#10;Examples: variante-a, variante-b, hero-cta, footer-cta, whitepaper-sap-cloud, bild-1, video-kurz">?</span></label>
               <input type="text" id="content">
             </div>
             <div class="form-row">

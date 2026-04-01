@@ -15,10 +15,26 @@ function uniqueSlug() {
   return crypto.randomBytes(6).toString('base64url').slice(0, 8).toLowerCase();
 }
 
+// Default taxonomy values (Versino AG UTM convention)
+const DEFAULT_SOURCES = [
+  'linkedin', 'google', 'instagram', 'youtube', 'mailing', 'email',
+  'webinar', 'doc', 'off-banner', 'off-card', 'off-flyer', 'off-mail', 'off-merch',
+];
+const DEFAULT_MEDIUMS = [
+  'social', 'paid-social', 'paid-search', 'paid-display', 'paid-video',
+  'signature', 'link', 'button', 'qr',
+];
+
+function mergeDefaults(dbValues, defaults) {
+  const set = new Set(dbValues);
+  defaults.forEach(d => set.add(d));
+  return [...set].sort();
+}
+
 // GET /api/links/suggestions — distinct values for autocomplete
 router.get('/suggestions', (_req, res) => {
-  const sources    = db.prepare('SELECT DISTINCT source FROM links ORDER BY source').all().map(r => r.source);
-  const mediums    = db.prepare('SELECT DISTINCT medium FROM links ORDER BY medium').all().map(r => r.medium);
+  const sources    = mergeDefaults(db.prepare('SELECT DISTINCT source FROM links ORDER BY source').all().map(r => r.source), DEFAULT_SOURCES);
+  const mediums    = mergeDefaults(db.prepare('SELECT DISTINCT medium FROM links ORDER BY medium').all().map(r => r.medium), DEFAULT_MEDIUMS);
   const campaigns  = db.prepare('SELECT DISTINCT campaign FROM links ORDER BY campaign').all().map(r => r.campaign);
   const authors    = db.prepare('SELECT DISTINCT created_by FROM links WHERE created_by IS NOT NULL ORDER BY created_by').all().map(r => r.created_by);
   const destinations = db.prepare('SELECT DISTINCT destination_url FROM links ORDER BY destination_url').all().map(r => r.destination_url);

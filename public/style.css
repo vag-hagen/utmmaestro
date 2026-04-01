@@ -845,5 +845,56 @@ td.actions-cell {
   td { max-width: 80px; font-size: 10px; }
 }
 
+/* ── TOOLTIPS ── */
+.tooltip-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--blue-dim);
+  border: 1px solid var(--blue);
+  color: var(--blue-bright);
+  font-size: 10px;
+  font-weight: 700;
+  cursor: help;
+  position: relative;
+  vertical-align: middle;
+  margin-left: 4px;
+  text-transform: none;
+  letter-spacing: 0;
+  line-height: 1;
+}
+.tooltip-icon::after {
+  content: attr(data-tip);
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 8px);
+  transform: translateX(-50%);
+  background: var(--bg-raised);
+  border: 1px solid var(--border-bright);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  color: var(--text-secondary);
+  font-family: var(--font);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.5;
+  padding: 10px 14px;
+  white-space: pre-line;
+  width: 300px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s;
+  z-index: 60;
+}
+.tooltip-icon:hover::after {
+  opacity: 1;
+}
+@media (max-width: 640px) {
+  .tooltip-icon::after { width: 220px; left: 0; transform: none; }
+}
+
 /* ── UTILITIES ── */
 .hidden { display: none !important; }
