@@ -870,17 +870,49 @@ td.actions-cell {
   line-height: 1.7;
   margin-bottom: 36px;
 }
-.howto-section {
-  margin-bottom: 44px;
-}
-.howto-section h2 {
-  font-size: 18px;
-  font-weight: 700;
-  color: var(--text);
+/* Accordion */
+.howto-accordion {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
   margin-bottom: 12px;
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+.howto-accordion[open] {
+  border-color: var(--border-bright);
+}
+.howto-summary {
   display: flex;
   align-items: center;
   gap: 12px;
+  padding: 16px 20px;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+  cursor: pointer;
+  user-select: none;
+  list-style: none;
+  transition: background 0.15s;
+}
+.howto-summary::-webkit-details-marker { display: none; }
+.howto-summary::after {
+  content: '+';
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 18px;
+  color: var(--text-muted);
+  transition: transform 0.2s, color 0.2s;
+}
+.howto-accordion[open] > .howto-summary::after {
+  content: '−';
+  color: var(--blue-vivid);
+}
+.howto-summary:hover {
+  background: var(--bg-hover);
+}
+.howto-body {
+  padding: 0 20px 20px;
 }
 .howto-num {
   display: inline-flex;
@@ -897,7 +929,7 @@ td.actions-cell {
   font-weight: 700;
   flex-shrink: 0;
 }
-.howto-section h3 {
+.howto-body h3 {
   font-size: 14px;
   font-weight: 700;
   color: var(--orange-bright);
@@ -905,27 +937,27 @@ td.actions-cell {
   letter-spacing: 0.06em;
   margin: 20px 0 10px;
 }
-.howto-section h4 {
+.howto-body h4 {
   font-size: 13px;
   font-weight: 700;
   color: var(--blue-bright);
   margin-bottom: 8px;
 }
-.howto-section p {
+.howto-body p {
   color: var(--text-secondary);
   font-size: 14px;
   line-height: 1.7;
   margin-bottom: 10px;
 }
-.howto-section ul, .howto-section ol {
+.howto-body ul, .howto-body ol {
   color: var(--text-secondary);
   font-size: 14px;
   line-height: 1.8;
   margin: 0 0 14px 20px;
 }
-.howto-section ul ul { margin-top: 4px; margin-bottom: 4px; }
-.howto-section li { margin-bottom: 2px; }
-.howto-section code {
+.howto-body ul ul { margin-top: 4px; margin-bottom: 4px; }
+.howto-body li { margin-bottom: 2px; }
+.howto-body code {
   font-family: var(--font-mono);
   font-size: 12px;
   background: var(--bg-raised);
@@ -934,7 +966,7 @@ td.actions-cell {
   padding: 1px 6px;
   color: var(--orange-bright);
 }
-.howto-section kbd {
+.howto-body kbd {
   font-family: var(--font-mono);
   font-size: 11px;
   background: var(--bg-raised);
@@ -944,8 +976,8 @@ td.actions-cell {
   color: var(--text);
   box-shadow: 0 1px 0 var(--border-bright);
 }
-.howto-section strong { color: var(--text); }
-.howto-section em { color: var(--text-muted); }
+.howto-body strong { color: var(--text); }
+.howto-body em { color: var(--text-muted); }
 
 .howto-card {
   background: var(--bg-surface);
