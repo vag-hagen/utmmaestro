@@ -854,6 +854,171 @@ td.actions-cell {
   td { max-width: 80px; font-size: 10px; }
 }
 
+/* ── HOW TO USE ── */
+.howto { max-width: 780px; }
+.howto-title {
+  font-family: var(--font-mono);
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--blue-vivid);
+  text-shadow: var(--blue-glow-sm);
+  margin-bottom: 12px;
+}
+.howto-intro {
+  color: var(--text-secondary);
+  font-size: 15px;
+  line-height: 1.7;
+  margin-bottom: 36px;
+}
+.howto-section {
+  margin-bottom: 44px;
+}
+.howto-section h2 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.howto-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--blue-dim);
+  border: 1px solid var(--blue);
+  color: var(--blue-vivid);
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.howto-section h3 {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--orange-bright);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin: 20px 0 10px;
+}
+.howto-section h4 {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--blue-bright);
+  margin-bottom: 8px;
+}
+.howto-section p {
+  color: var(--text-secondary);
+  font-size: 14px;
+  line-height: 1.7;
+  margin-bottom: 10px;
+}
+.howto-section ul, .howto-section ol {
+  color: var(--text-secondary);
+  font-size: 14px;
+  line-height: 1.8;
+  margin: 0 0 14px 20px;
+}
+.howto-section ul ul { margin-top: 4px; margin-bottom: 4px; }
+.howto-section li { margin-bottom: 2px; }
+.howto-section code {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  background: var(--bg-raised);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 1px 6px;
+  color: var(--orange-bright);
+}
+.howto-section kbd {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  background: var(--bg-raised);
+  border: 1px solid var(--border-bright);
+  border-radius: 3px;
+  padding: 2px 6px;
+  color: var(--text);
+  box-shadow: 0 1px 0 var(--border-bright);
+}
+.howto-section strong { color: var(--text); }
+.howto-section em { color: var(--text-muted); }
+
+.howto-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  margin: 14px 0;
+}
+.howto-card h4 { margin-top: 0; }
+
+.howto-example {
+  border-left: 3px solid var(--orange);
+}
+.howto-result {
+  margin-top: 12px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--green);
+  word-break: break-all;
+  line-height: 1.6;
+}
+.howto-result code {
+  color: var(--green);
+  border: none;
+  background: none;
+  padding: 0;
+  font-size: 12px;
+}
+
+.howto-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  margin: 10px 0;
+}
+.howto-table thead th {
+  background: var(--bg-raised);
+  color: var(--blue-vivid);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 8px 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--border-bright);
+}
+.howto-table td {
+  padding: 8px 12px;
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--border);
+  max-width: none;
+  white-space: normal;
+  overflow: visible;
+}
+.howto-table tr:last-child td { border-bottom: none; }
+.howto-table code {
+  font-size: 12px;
+}
+.howto-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--blue-dim);
+  border: 1px solid var(--blue);
+  color: var(--blue-bright);
+  font-size: 10px;
+  font-weight: 700;
+  vertical-align: middle;
+}
+
 /* ── TOOLTIPS ── */
 .tooltip-icon {
   display: inline-flex;

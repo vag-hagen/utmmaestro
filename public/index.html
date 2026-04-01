@@ -13,6 +13,7 @@
       <button class="tab-btn active" data-tab="generator">Generator</button>
       <button class="tab-btn" data-tab="registry">Registry</button>
       <button class="tab-btn" data-tab="dashboard">Dashboard</button>
+      <button class="tab-btn" data-tab="howto">How to use</button>
     </nav>
   </header>
 
@@ -285,6 +286,187 @@
             </div>
           </div>
         </div>
+      </div>
+    </section>
+    <!-- HOW TO USE TAB -->
+    <section id="tab-howto" class="tab-panel">
+      <div class="panel-inner howto">
+
+        <h1 class="howto-title">How to use UTM Maestro</h1>
+        <p class="howto-intro">UTM Maestro helps you create, manage, and analyze UTM-tagged links across all marketing channels. Every link follows a consistent naming convention (taxonomy) so your analytics stay clean and comparable.</p>
+
+        <!-- ── GENERATOR ── -->
+        <div class="howto-section">
+          <h2><span class="howto-num">1</span> Generator</h2>
+          <p>The Generator tab is where you create new UTM links. Fill in the required fields, save the link, and get a trackable URL plus a short link for sharing.</p>
+
+          <h3>Workflow</h3>
+          <ol>
+            <li>Enter the <strong>Destination URL</strong> — the page you want to send traffic to.</li>
+            <li>Select or type a <strong>Source</strong>, <strong>Medium</strong>, and <strong>Campaign</strong>. The autocomplete dropdown suggests standard values from our taxonomy (see below).</li>
+            <li>Optionally expand <em>"More +"</em> to add <strong>Content</strong>, <strong>Author</strong>, or a <strong>Note</strong>.</li>
+            <li>The <strong>UTM URL preview</strong> updates live as you type.</li>
+            <li>Click <strong>Save</strong> to store the link. A unique short link is generated automatically.</li>
+            <li>After saving, use <strong>Copy UTM</strong>, <strong>Copy Short Link</strong>, or <strong>QR ↓</strong> to share the link.</li>
+          </ol>
+          <p>Hover over the <span class="howto-badge">?</span> icon next to each field label for a quick reference of accepted values.</p>
+
+          <h3>UTM Taxonomy — Naming Convention</h3>
+          <p>All UTM parameters follow a strict naming convention to keep data consistent across campaigns, channels, and team members.</p>
+
+          <div class="howto-card">
+            <h4>General Rules</h4>
+            <ul>
+              <li>Everything <strong>lowercase</strong>, separator is a hyphen (<code>-</code>), no spaces, no umlauts.</li>
+              <li>Values are auto-slugified when saving.</li>
+            </ul>
+          </div>
+
+          <div class="howto-card">
+            <h4>utm_source — Where does the traffic come from?</h4>
+            <p>The platform or sender. Use the same spelling every time.</p>
+            <table class="howto-table">
+              <thead><tr><th>Source</th><th>Use for</th></tr></thead>
+              <tbody>
+                <tr><td><code>linkedin</code></td><td>LinkedIn (organic + paid)</td></tr>
+                <tr><td><code>google</code></td><td>Google Ads</td></tr>
+                <tr><td><code>instagram</code></td><td>Instagram (organic + paid)</td></tr>
+                <tr><td><code>youtube</code></td><td>YouTube</td></tr>
+                <tr><td><code>mailing</code></td><td>Mass mailings &amp; newsletters</td></tr>
+                <tr><td><code>email</code></td><td>Direct emails from employees (incl. signatures)</td></tr>
+                <tr><td><code>extern-{name}</code></td><td>External websites, partners, job portals, e.g. <code>extern-b1-blog</code>, <code>extern-stepstone</code></td></tr>
+                <tr><td><code>webinar</code></td><td>Webinars</td></tr>
+                <tr><td><code>doc</code></td><td>Links in digital documents (PDFs, whitepapers, proposals)</td></tr>
+                <tr><td><code>off-banner</code></td><td>Physical: banners, roll-ups</td></tr>
+                <tr><td><code>off-card</code></td><td>Physical: business cards</td></tr>
+                <tr><td><code>off-flyer</code></td><td>Physical: flyers, brochures</td></tr>
+                <tr><td><code>off-mail</code></td><td>Physical: direct mail / postal</td></tr>
+                <tr><td><code>off-merch</code></td><td>Physical: merchandise, giveaways</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="howto-card">
+            <h4>utm_medium — How does the traffic arrive?</h4>
+            <p>The channel type. Use values from this fixed list only.</p>
+            <table class="howto-table">
+              <thead><tr><th>Medium</th><th>Description</th></tr></thead>
+              <tbody>
+                <tr><td><code>social</code></td><td>Organic social media posts</td></tr>
+                <tr><td><code>paid-social</code></td><td>Paid social media ads</td></tr>
+                <tr><td><code>paid-search</code></td><td>Paid search ads (e.g. Google Ads Search)</td></tr>
+                <tr><td><code>paid-display</code></td><td>Display / banner advertising</td></tr>
+                <tr><td><code>paid-video</code></td><td>Video advertising (e.g. YouTube Ads)</td></tr>
+                <tr><td><code>signature</code></td><td>Links in email signatures</td></tr>
+                <tr><td><code>link</code></td><td>Text link / reference</td></tr>
+                <tr><td><code>button</code></td><td>Button link (CTA buttons in emails, pages, docs)</td></tr>
+                <tr><td><code>qr</code></td><td>QR codes on physical materials</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="howto-card">
+            <h4>utm_campaign — Why? (Campaign / Occasion)</h4>
+            <p>Uses the schema: <code>{type}-{name}-{period}</code></p>
+            <table class="howto-table">
+              <thead><tr><th>Type Prefix</th><th>Category</th><th>Example</th></tr></thead>
+              <tbody>
+                <tr><td><code>cmpg-</code></td><td>Marketing campaigns</td><td><code>cmpg-b1-cloud-launch-q2-26</code></td></tr>
+                <tr><td><code>brand-</code></td><td>Everyday marketing / branding</td><td><code>brand-linkedin-thoughtleadership-q2-26</code></td></tr>
+                <tr><td><code>job-</code></td><td>Recruiting campaigns</td><td><code>job-dev-altoetting-2026-04</code></td></tr>
+                <tr><td><code>event-</code></td><td>Events &amp; trade shows</td><td><code>event-dsag-kongress-2026-10</code></td></tr>
+                <tr><td><code>other-</code></td><td>Miscellaneous</td><td><code>other-internal-test</code></td></tr>
+              </tbody>
+            </table>
+            <p><strong>Period:</strong> <code>q1-26</code> for quarters, <code>2026-04</code> for months. Omit for permanent links (e.g. <code>brand-signatur</code>).</p>
+          </div>
+
+          <div class="howto-card">
+            <h4>utm_content — What exactly? (Optional)</h4>
+            <p>Use to differentiate within a campaign. Free-form but keep it consistent.</p>
+            <p>Examples: <code>variante-a</code>, <code>hero-cta</code>, <code>footer-cta</code>, <code>whitepaper-sap-cloud</code>, <code>bild-1</code>, <code>video-kurz</code></p>
+          </div>
+
+          <div class="howto-card howto-example">
+            <h4>Full Example</h4>
+            <p>Promoting the SAP B1 Cloud Launch on LinkedIn with a paid ad in Q2 2026:</p>
+            <table class="howto-table">
+              <tbody>
+                <tr><td>Destination URL</td><td><code>https://versino.de/sap-b1-cloud</code></td></tr>
+                <tr><td>Source</td><td><code>linkedin</code></td></tr>
+                <tr><td>Medium</td><td><code>paid-social</code></td></tr>
+                <tr><td>Campaign</td><td><code>cmpg-b1-cloud-launch-q2-26</code></td></tr>
+                <tr><td>Content</td><td><code>hero-cta</code></td></tr>
+              </tbody>
+            </table>
+            <p class="howto-result">→ <code>https://versino.de/sap-b1-cloud?utm_source=linkedin&amp;utm_medium=paid-social&amp;utm_campaign=cmpg-b1-cloud-launch-q2-26&amp;utm_content=hero-cta</code></p>
+          </div>
+        </div>
+
+        <!-- ── REGISTRY ── -->
+        <div class="howto-section">
+          <h2><span class="howto-num">2</span> Registry</h2>
+          <p>The Registry is your central library of all saved UTM links.</p>
+
+          <h3>Features</h3>
+          <ul>
+            <li><strong>Search &amp; Filter</strong> — Use the toolbar to search across all fields, or filter by campaign, source, medium, status, or date range. Hit <kbd>Enter</kbd> in any filter field to apply.</li>
+            <li><strong>Sortable Columns</strong> — Click any column header to sort ascending, descending, or reset. Works for date, campaign, source, medium, clicks, author, status, sessions, and conversions.</li>
+            <li><strong>Quick Actions</strong> per row:
+              <ul>
+                <li>🔗 Copy the short link</li>
+                <li>⧉ Copy the full UTM URL</li>
+                <li>⊞ Download a QR code (SVG or PNG)</li>
+                <li>✎ Edit all fields including the short link slug</li>
+                <li>⊠ / ↩ Archive or reactivate a link</li>
+                <li>✕ Permanently delete a link</li>
+              </ul>
+            </li>
+            <li><strong>Right-click any cell</strong> to quickly copy its value.</li>
+            <li><strong>CSV Export</strong> — Download the current (filtered) view as a CSV file.</li>
+            <li><strong>CSV Import</strong> — Upload a CSV with columns: <code>campaign</code>, <code>source</code>, <code>medium</code>, <code>destination_url</code>, <code>utm_url</code> (required), plus optional <code>content</code>, <code>created_by</code>, <code>note</code>.</li>
+          </ul>
+
+          <h3>Editing a Link</h3>
+          <p>Click the ✎ icon to open the edit modal. You can change any field, including the short link slug. The UTM URL preview updates live as you edit. Slug changes are validated — duplicates are blocked.</p>
+        </div>
+
+        <!-- ── DASHBOARD ── -->
+        <div class="howto-section">
+          <h2><span class="howto-num">3</span> Dashboard</h2>
+          <p>The Dashboard combines GA4 analytics with click tracking data to give you a full picture of campaign performance.</p>
+
+          <h3>Campaigns View</h3>
+          <ul>
+            <li>Shows all campaign/source/medium combinations with <strong>Sessions</strong>, <strong>Users</strong>, <strong>Conversions</strong>, <strong>Conversion Rate</strong>, and <strong>Clicks</strong> (from short link tracking).</li>
+            <li>A green dot indicates that the UTM combination exists in the registry.</li>
+            <li>Click any row to open the <strong>detail modal</strong> with 5 metric cards (Clicks, Sessions, Conversions, Bounce Rate, Avg. Duration) and two charts (Sessions over time, Clicks over time).</li>
+          </ul>
+
+          <h3>Channels View</h3>
+          <p>A bar chart breaking down sessions by channel (source/medium), giving you a quick visual comparison of which channels drive the most traffic.</p>
+
+          <h3>Controls</h3>
+          <ul>
+            <li><strong>Date range</strong> — Choose 7 days, 30 days, 90 days, or a custom range.</li>
+            <li><strong>Refresh GA4</strong> — Fetches the latest data from Google Analytics. GA4 data is cached and refreshed automatically every night at 03:00.</li>
+            <li><strong>CSV ↓</strong> — Export the current dashboard data.</li>
+          </ul>
+        </div>
+
+        <!-- ── SHORT LINKS ── -->
+        <div class="howto-section">
+          <h2><span class="howto-num">4</span> Short Links &amp; Click Tracking</h2>
+          <p>Every saved link automatically gets a short link like <code>utm.versino.de/a3x9kf</code>. When someone clicks the short link:</p>
+          <ol>
+            <li>The click is logged with a timestamp.</li>
+            <li>The user is redirected (302) to the full UTM URL.</li>
+            <li>Google Analytics picks up the UTM parameters on the destination page.</li>
+          </ol>
+          <p>This gives you <strong>two independent data points</strong>: click counts from the redirect (visible in Registry &amp; Dashboard) and session/conversion data from GA4.</p>
+          <p>You can customize the slug in the edit modal (e.g. change <code>a3x9kf</code> to <code>b1-cloud</code>). Duplicate slugs are blocked.</p>
+        </div>
+
       </div>
     </section>
   </main>
