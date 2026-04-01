@@ -26,8 +26,16 @@ const generatorModule = (() => {
     document.getElementById('btn-save').disabled = !hasUrl || isSaved;
     document.getElementById('btn-copy').disabled = !isSaved;
     document.getElementById('btn-qr').disabled   = !isSaved;
-    // Visual hint
     document.getElementById('btn-save').textContent = isSaved ? 'Saved ✓' : 'Save';
+
+    const row = document.getElementById('shortlink-row');
+    if (isSaved && savedLink.slug) {
+      const url = `https://utm.versino.de/${savedLink.slug}`;
+      document.getElementById('shortlink-url').textContent = url;
+      row.classList.remove('hidden');
+    } else {
+      row.classList.add('hidden');
+    }
   }
 
   function showFeedback(message, type = 'success') {
@@ -114,6 +122,12 @@ const generatorModule = (() => {
     });
 
     document.getElementById('btn-save').addEventListener('click', saveLink);
+
+    document.getElementById('btn-copy-short').addEventListener('click', () => {
+      if (!savedLink?.slug) return;
+      copyToClipboard(`https://utm.versino.de/${savedLink.slug}`);
+      showFeedback('Short link copied');
+    });
 
     document.getElementById('btn-reset').addEventListener('click', () => {
       ['destination_url', 'source', 'medium', 'campaign', 'content', 'created_by', 'save-note'].forEach(id =>
