@@ -27,7 +27,7 @@
             <div class="ac-wrap"><input type="url" id="destination_url" required autocomplete="off"></div>
           </div>
           <div class="form-row">
-            <label for="source">Source <span class="required">*</span> <span class="tooltip-icon" data-tip="Where does the traffic come from? (platform/sender)&#10;&#10;Examples: linkedin, google, mailing, email, instagram, youtube, webinar, doc, extern-{name}, off-banner, off-card, off-flyer">?</span></label>
+            <label for="source">Source <span class="required">*</span> <span class="tooltip-icon" data-tip="Where does the traffic come from? (platform/sender)&#10;&#10;Examples: linkedin, google, mailing, email, instagram, youtube, webinar, doc, ext-{name}, off-banner, off-card, off-flyer">?</span></label>
             <div class="ac-wrap"><input type="text" id="source" required autocomplete="off"></div>
           </div>
           <div class="form-row">
@@ -35,7 +35,7 @@
             <div class="ac-wrap"><input type="text" id="medium" required autocomplete="off"></div>
           </div>
           <div class="form-row">
-            <label for="campaign">Campaign <span class="required">*</span> <span class="tooltip-icon" data-tip="Why? (campaign/occasion)&#10;Schema: {type}-{name}-{period}&#10;&#10;Types: cmpg-, brand-, job-, event-, other-&#10;Period: q1-26, 2026-04, or omit for permanent&#10;&#10;Examples: cmpg-b1-cloud-launch-q2-26, brand-signatur, event-dsag-kongress-2026-10">?</span></label>
+            <label for="campaign">Campaign <span class="required">*</span> <span class="tooltip-icon" data-tip="Why? (campaign/occasion)&#10;Schema: {type}-{name}-{period}&#10;&#10;Types: k123-, brand-, job-, event-, other-&#10;Period: q1-26, 2026-04, or omit for permanent&#10;&#10;Examples: k123-b1-cloud-launch-q2-26, brand-signatur, event-dsag-kongress-2026-10">?</span></label>
             <div class="ac-wrap"><input type="text" id="campaign" required autocomplete="off"></div>
           </div>
           <button type="button" id="btn-more-fields" class="btn-expand">More +</button>
@@ -334,7 +334,7 @@
                 <tr><td><code>youtube</code></td><td>YouTube</td></tr>
                 <tr><td><code>mailing</code></td><td>Mass mailings &amp; newsletters</td></tr>
                 <tr><td><code>email</code></td><td>Direct emails from employees (incl. signatures)</td></tr>
-                <tr><td><code>extern-{name}</code></td><td>External websites, partners, job portals, e.g. <code>extern-b1-blog</code>, <code>extern-stepstone</code></td></tr>
+                <tr><td><code>ext-{name}</code></td><td>External websites, partners, job portals, e.g. <code>ext-b1-blog</code>, <code>ext-stepstone</code></td></tr>
                 <tr><td><code>webinar</code></td><td>Webinars</td></tr>
                 <tr><td><code>doc</code></td><td>Links in digital documents (PDFs, whitepapers, proposals)</td></tr>
                 <tr><td><code>off-banner</code></td><td>Physical: banners, roll-ups</td></tr>
@@ -371,7 +371,7 @@
             <table class="howto-table">
               <thead><tr><th>Type Prefix</th><th>Category</th><th>Example</th></tr></thead>
               <tbody>
-                <tr><td><code>cmpg-</code></td><td>Marketing campaigns</td><td><code>cmpg-b1-cloud-launch-q2-26</code></td></tr>
+                <tr><td><code>k123-</code></td><td>Marketing campaigns</td><td><code>k123-b1-cloud-launch-q2-26</code></td></tr>
                 <tr><td><code>brand-</code></td><td>Everyday marketing / branding</td><td><code>brand-linkedin-thoughtleadership-q2-26</code></td></tr>
                 <tr><td><code>job-</code></td><td>Recruiting campaigns</td><td><code>job-dev-altoetting-2026-04</code></td></tr>
                 <tr><td><code>event-</code></td><td>Events &amp; trade shows</td><td><code>event-dsag-kongress-2026-10</code></td></tr>
@@ -395,11 +395,11 @@
                 <tr><td>Destination URL</td><td><code>https://versino.de/sap-b1-cloud</code></td></tr>
                 <tr><td>Source</td><td><code>linkedin</code></td></tr>
                 <tr><td>Medium</td><td><code>paid-social</code></td></tr>
-                <tr><td>Campaign</td><td><code>cmpg-b1-cloud-launch-q2-26</code></td></tr>
+                <tr><td>Campaign</td><td><code>k123-b1-cloud-launch-q2-26</code></td></tr>
                 <tr><td>Content</td><td><code>hero-cta</code></td></tr>
               </tbody>
             </table>
-            <p class="howto-result">→ <code>https://versino.de/sap-b1-cloud?utm_source=linkedin&amp;utm_medium=paid-social&amp;utm_campaign=cmpg-b1-cloud-launch-q2-26&amp;utm_content=hero-cta</code></p>
+            <p class="howto-result">→ <code>https://versino.de/sap-b1-cloud?utm_source=linkedin&amp;utm_medium=paid-social&amp;utm_campaign=k123-b1-cloud-launch-q2-26&amp;utm_content=hero-cta</code></p>
           </div>
         </div>
 

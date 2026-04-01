@@ -23,7 +23,7 @@ Einheitliche Konventionen fuer `utm_source`, `utm_medium`, `utm_campaign` und op
 | `youtube`        | YouTube                                                                                                                                                  |
 | `mailing`        | Von uns versendete Massenmailings und Newsletter                                                                                                         |
 | `email`          | Direkte E-Mails von Mitarbeitern (inkl. Signaturen)                                                                                                     |
-| `extern-{name}`  | Externe Websites, Blogs, Partner, Jobportale, Newsletter, Fachmedien. Z.B. `extern-b1-blog`, `extern-boyum`, `extern-stepstone`, `extern-sap-newsletter` |
+| `ext-{name}`  | Externe Websites, Blogs, Partner, Jobportale, Newsletter, Fachmedien. Z.B. `ext-b1-blog`, `ext-boyum`, `ext-stepstone`, `ext-sap-newsletter` |
 | `webinar`        | Webinare                                                                                                                                                 |
 | `doc`            | Links in digitalen Dokumenten (PDFs, Whitepapers, Angebote)                                                                                             |
 | `off-banner`     | Physisch: Banner, Roll-Ups                                                                                                                               |
@@ -61,7 +61,7 @@ Einheitliche Konventionen fuer `utm_source`, `utm_medium`, `utm_campaign` und op
 
 | Praefix  | Kategorie                     | Beispiele                                     |
 | -------- | ----------------------------- | --------------------------------------------- |
-| `cmpg-`  | Marketing-Kampagnen           | Produktlaunches, Themen-Kampagnen, Promotions |
+| `k123-`  | Marketing-Kampagnen           | Produktlaunches, Themen-Kampagnen, Promotions |
 | `brand-` | Everyday Marketing / Branding | Laufende Markenarbeit, Awareness              |
 | `job-`   | Recruiting-Kampagnen          | Stellenanzeigen, Employer Branding            |
 | `event-` | Event-/Messe-Kampagnen        | Messe-Auftritte, Webinare                     |
@@ -80,12 +80,12 @@ Kein Zeitraum = dauerhaft (z.B. E-Mail-Signaturen, Visitenkarten).
 
 | Kampagne                            | utm_campaign                             |
 | ----------------------------------- | ---------------------------------------- |
-| SAP B1 Cloud Launch Q2              | `cmpg-b1-cloud-launch-q2-26`            |
+| SAP B1 Cloud Launch Q2              | `k123-b1-cloud-launch-q2-26`            |
 | LinkedIn Thought Leadership laufend | `brand-linkedin-thoughtleadership-q2-26` |
 | Recruiting Entwickler Altoetting    | `job-dev-altoetting-2026-04`             |
 | DSAG Jahreskongress 2026            | `event-dsag-kongress-2026-10`            |
 | E-Mail-Signatur dauerhaft           | `brand-signatur`                         |
-| Whitepaper Download Kampagne        | `cmpg-whitepaper-migration-q2-26`        |
+| Whitepaper Download Kampagne        | `k123-whitepaper-migration-q2-26`        |
 
 ---
 
