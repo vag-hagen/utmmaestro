@@ -165,6 +165,8 @@ const registryModule = (() => {
       Autocomplete.update(document.getElementById('edit-campaign'), campaigns);
       Autocomplete.update(document.getElementById('edit-destination'), destinations);
       Autocomplete.update(document.getElementById('edit-author'), authors);
+      Autocomplete.setTips(document.getElementById('edit-source'), UTM_TIPS.sources);
+      Autocomplete.setTips(document.getElementById('edit-medium'), UTM_TIPS.mediums);
     } catch { /* ignore */ }
   }
 
@@ -318,6 +320,7 @@ const registryModule = (() => {
     try {
       const { mediums } = await API.links.suggestions();
       Autocomplete.update(document.getElementById('filter-medium'), mediums);
+      Autocomplete.setTips(document.getElementById('filter-medium'), UTM_TIPS.mediums);
     } catch { /* ignore */ }
   }
 

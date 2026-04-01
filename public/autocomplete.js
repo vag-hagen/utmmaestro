@@ -4,6 +4,7 @@
  * Usage:
  *   Autocomplete.attach(inputElement, ['option1', 'option2', ...])
  *   Autocomplete.update(inputElement, ['new', 'options'])
+ *   Autocomplete.setTips(inputElement, { option1: 'description', ... })
  *
  * The input must be inside a <div class="ac-wrap">.
  */
@@ -19,7 +20,7 @@ const Autocomplete = (() => {
     list.className = 'ac-list hidden';
     wrap.appendChild(list);
 
-    const state = { items, activeIdx: -1, visible: false };
+    const state = { items, tips: {}, activeIdx: -1, visible: false };
     registry.set(input, { list, state });
 
     input.addEventListener('input', () => show(input));
@@ -31,6 +32,11 @@ const Autocomplete = (() => {
   function update(input, items) {
     const entry = registry.get(input);
     if (entry) entry.state.items = items;
+  }
+
+  function setTips(input, tips) {
+    const entry = registry.get(input);
+    if (entry) entry.state.tips = tips || {};
   }
 
   function show(input) {
@@ -54,16 +60,27 @@ const Autocomplete = (() => {
     filtered.forEach((item, idx) => {
       const opt = document.createElement('div');
       opt.className = 'ac-option';
+      const tip = state.tips[item];
+      if (tip) opt.setAttribute('data-ac-tip', tip);
+
       // Highlight matching part
       const matchStart = item.toLowerCase().indexOf(val);
+      let labelHtml;
       if (val && matchStart >= 0) {
-        opt.innerHTML =
+        labelHtml =
           escapeAc(item.slice(0, matchStart)) +
           '<span class="ac-match">' + escapeAc(item.slice(matchStart, matchStart + val.length)) + '</span>' +
           escapeAc(item.slice(matchStart + val.length));
       } else {
-        opt.textContent = item;
+        labelHtml = escapeAc(item);
       }
+
+      if (tip) {
+        opt.innerHTML = '<span class="ac-label">' + labelHtml + '</span><span class="ac-tip">' + escapeAc(tip) + '</span>';
+      } else {
+        opt.innerHTML = labelHtml;
+      }
+
       opt.addEventListener('mousedown', e => {
         e.preventDefault();
         input.value = item;
@@ -120,5 +137,5 @@ const Autocomplete = (() => {
     return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
   }
 
-  return { attach, update };
+  return { attach, update, setTips };
 })();

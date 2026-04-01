@@ -1,3 +1,32 @@
+const UTM_TIPS = {
+  sources: {
+    'linkedin':    'LinkedIn (organic + paid)',
+    'google':      'Google Ads',
+    'instagram':   'Instagram (organic + paid)',
+    'youtube':     'YouTube',
+    'mailing':     'Mass mailings & newsletters',
+    'email':       'Direct emails from employees (incl. signatures)',
+    'webinar':     'Webinars',
+    'doc':         'Links in digital documents (PDFs, whitepapers, proposals)',
+    'off-banner':  'Physical: banners, roll-ups',
+    'off-card':    'Physical: business cards',
+    'off-flyer':   'Physical: flyers, brochures',
+    'off-mail':    'Physical: direct mail / postal',
+    'off-merch':   'Physical: merchandise, giveaways',
+  },
+  mediums: {
+    'social':       'Organic social media posts',
+    'paid-social':  'Paid social media ads',
+    'paid-search':  'Paid search ads (e.g. Google Ads Search)',
+    'paid-display': 'Display / banner advertising',
+    'paid-video':   'Video advertising (e.g. YouTube Ads)',
+    'signature':    'Links in email signatures',
+    'link':         'Text link / reference',
+    'button':       'Button link (CTA buttons in emails, pages, docs)',
+    'qr':           'QR codes on physical materials',
+  },
+};
+
 const generatorModule = (() => {
   let currentUtmUrl = null;
   let savedLink     = null; // set after save, cleared on form change
@@ -55,6 +84,8 @@ const generatorModule = (() => {
       Autocomplete.update(document.getElementById('medium'), mediums);
       Autocomplete.update(document.getElementById('campaign'), campaigns);
       Autocomplete.update(document.getElementById('created_by'), authors);
+      Autocomplete.setTips(document.getElementById('source'), UTM_TIPS.sources);
+      Autocomplete.setTips(document.getElementById('medium'), UTM_TIPS.mediums);
     } catch { /* silently ignore on first load */ }
   }
 
@@ -109,6 +140,8 @@ const generatorModule = (() => {
     Autocomplete.attach(document.getElementById('medium'), []);
     Autocomplete.attach(document.getElementById('campaign'), []);
     Autocomplete.attach(document.getElementById('created_by'), []);
+    Autocomplete.setTips(document.getElementById('source'), UTM_TIPS.sources);
+    Autocomplete.setTips(document.getElementById('medium'), UTM_TIPS.mediums);
 
     document.getElementById('btn-copy').addEventListener('click', () => {
       if (!savedLink) return;
