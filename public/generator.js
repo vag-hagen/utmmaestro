@@ -23,18 +23,19 @@ const generatorModule = (() => {
   function updateButtons() {
     const hasUrl   = Boolean(currentUtmUrl);
     const isSaved  = Boolean(savedLink);
-    document.getElementById('btn-save').disabled = !hasUrl || isSaved;
-    document.getElementById('btn-copy').disabled = !isSaved;
-    document.getElementById('btn-qr').disabled   = !isSaved;
-    document.getElementById('btn-save').textContent = isSaved ? 'Saved ✓' : 'Save';
+    document.getElementById('btn-save').disabled       = !hasUrl || isSaved;
+    document.getElementById('btn-copy').disabled        = !isSaved;
+    document.getElementById('btn-copy-short').disabled  = !isSaved;
+    document.getElementById('btn-qr').disabled          = !isSaved;
+    document.getElementById('btn-save').textContent     = isSaved ? 'Saved ✓' : 'Save';
 
-    const row = document.getElementById('shortlink-row');
+    const el = document.getElementById('shortlink-preview');
     if (isSaved && savedLink.slug) {
-      const url = `https://utm.versino.de/${savedLink.slug}`;
-      document.getElementById('shortlink-url').textContent = url;
-      row.classList.remove('hidden');
+      el.textContent = `https://utm.versino.de/${savedLink.slug}`;
+      el.className = 'preview-url shortlink-preview-active';
     } else {
-      row.classList.add('hidden');
+      el.textContent = '—';
+      el.className = 'preview-url shortlink-preview-muted';
     }
   }
 

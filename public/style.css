@@ -179,24 +179,14 @@ select option { background: var(--bg-surface); color: var(--text); }
   background: var(--bg-raised);
   border-radius: 4px;
 }
-.shortlink-row {
-  margin-bottom: 16px;
-  padding-top: 12px;
-  border-top: 1px solid var(--border);
+.shortlink-preview-muted {
+  color: var(--text-muted);
+  opacity: 0.5;
 }
-.shortlink-display {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-.shortlink-url {
+.shortlink-preview-active {
   color: var(--green);
-  font-family: var(--font-mono);
-  font-size: 14px;
-  font-weight: 600;
   text-shadow: var(--green-glow);
 }
-.btn-sm { padding: 6px 14px; font-size: 11px; }
 
 .preview-actions { display: flex; gap: 12px; }
 
