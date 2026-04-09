@@ -57,6 +57,7 @@ const registryModule = (() => {
       <td>${escapeHtml(link.medium)}</td>
       <td title="${escapeHtml(link.content)}">${escapeHtml(link.content) || '—'}</td>
       <td class="url-cell" title="${escapeHtml(link.destination_url)}">${escapeHtml(link.destination_url)}</td>
+      <td class="url-cell" title="${escapeHtml(link.utm_url)}">${escapeHtml(link.utm_url)}</td>
       <td class="url-cell" title="${escapeHtml(shortUrl)}">${escapeHtml(shortUrl)}</td>
       <td data-sort-value="${link.clicks || 0}">${(link.clicks || 0).toLocaleString()}</td>
       <td>${escapeHtml(link.created_by) || '—'}</td>
