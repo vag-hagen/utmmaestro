@@ -105,6 +105,7 @@ header {
 .tab-panel { display: none; }
 .tab-panel.active { display: block; }
 .panel-inner { padding: 32px; max-width: 80%; margin: 0 auto; }
+#tab-registry .panel-inner { max-width: 100%; padding: 10px; }
 
 /* ── FORMS ── */
 .form-row {
