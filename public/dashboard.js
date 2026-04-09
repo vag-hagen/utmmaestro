@@ -7,6 +7,7 @@ const dashboardModule = (() => {
   let currentSummary = [];
   let clicksData     = { summary: [], daily: [] };
   let sorter         = null;
+  let contentLookup  = new Map();
 
   function aggregateChannels(summary) {
     const map = new Map();
@@ -16,6 +17,21 @@ const dashboardModule = (() => {
       map.get(r.medium).conversions += r.conversions || 0;
     }
     return map;
+  }
+
+  function buildContentLookup(links) {
+    contentLookup = new Map();
+    for (const l of links) {
+      if (!l.content) continue;
+      const key = `${l.campaign}|${l.source}|${l.medium}`;
+      if (!contentLookup.has(key)) contentLookup.set(key, new Set());
+      contentLookup.get(key).add(l.content);
+    }
+  }
+
+  function contentForCampaign(campaign, source, medium) {
+    const vals = contentLookup.get(`${campaign}|${source}|${medium}`);
+    return vals ? [...vals].join(', ') : '';
   }
 
   function clicksForCampaign(campaign, source, medium) {
@@ -51,6 +67,7 @@ const dashboardModule = (() => {
         _rate: r.sessions > 0 ? (r.conversions / r.sessions) * 100 : 0,
         _clicks: cd ? cd.clicks : 0,
         _hasSlug: cd ? Boolean(cd.slug) : false,
+        _content: contentForCampaign(r.campaign, r.source, r.medium),
       };
     });
     const sorted = sorter ? sorter.sort(enriched) : enriched;
@@ -65,6 +82,7 @@ const dashboardModule = (() => {
         <td>${r.campaign}</td>
         <td>${r.source}</td>
         <td>${r.medium}</td>
+        <td>${r._content || '—'}</td>
         <td>${(r.sessions || 0).toLocaleString()}</td>
         <td>${(r.users    || 0).toLocaleString()}</td>
         <td>${(r.conversions || 0).toLocaleString()}</td>
@@ -223,13 +241,15 @@ const dashboardModule = (() => {
     currentRange = range;
     try {
       const dates = dateRangeToDates(range);
-      const [ga4Result, clickResult] = await Promise.all([
+      const [ga4Result, clickResult, links] = await Promise.all([
         API.ga4.get(currentRange),
         API.links.clicks(dates),
+        API.links.list(),
       ]);
       currentRows    = ga4Result.rows;
       currentSummary = ga4Result.summary;
       clicksData     = clickResult;
+      buildContentLookup(links);
       renderCampaigns(ga4Result.summary);
       renderChannelsChart(ga4Result.summary);
       updateTimestamp(ga4Result.fetched_at);
@@ -240,11 +260,12 @@ const dashboardModule = (() => {
 
   function exportDashboardCsv() {
     if (currentSummary.length === 0) return;
-    const headers = ['campaign', 'source', 'medium', 'sessions', 'users', 'conversions', 'conv_rate', 'clicks'];
+    const headers = ['campaign', 'source', 'medium', 'content', 'sessions', 'users', 'conversions', 'conv_rate', 'clicks'];
     const rows = currentSummary.map(r => {
       const rate = r.sessions > 0 ? ((r.conversions / r.sessions) * 100).toFixed(1) + '%' : '0%';
       const cd = clicksForCampaign(r.campaign, r.source, r.medium);
-      return [r.campaign, r.source, r.medium, r.sessions || 0, r.users || 0, r.conversions || 0, rate, cd ? cd.clicks : 0];
+      const content = contentForCampaign(r.campaign, r.source, r.medium);
+      return [r.campaign, r.source, r.medium, content, r.sessions || 0, r.users || 0, r.conversions || 0, rate, cd ? cd.clicks : 0];
     });
     const lines = [
       headers.join(','),
@@ -299,13 +320,15 @@ const dashboardModule = (() => {
       try {
         currentRange = getRange() || '30d';
         const dates = dateRangeToDates(currentRange);
-        const [ga4Result, clickResult] = await Promise.all([
+        const [ga4Result, clickResult, links] = await Promise.all([
           API.ga4.refresh(currentRange),
           API.links.clicks(dates),
+          API.links.list(),
         ]);
         currentRows    = ga4Result.rows;
         currentSummary = ga4Result.summary;
         clicksData     = clickResult;
+        buildContentLookup(links);
         renderCampaigns(ga4Result.summary);
         renderChannelsChart(ga4Result.summary);
         updateTimestamp(ga4Result.fetched_at);
